@@ -16,6 +16,7 @@ export default {
       role_names: [],
     },
     menuPaths: {},
+    menuMap: {},
     menus: [],
   },
 
@@ -61,27 +62,34 @@ export default {
       });
 
       const menuPaths = {};
-      function findPath(data) {
+      const menuMap = {};
+      function fillData(data) {
         for (let i = 0; i < data.length; i += 1) {
+          menuMap[data[i].record_id] = data[i];
           if (data[i].router !== '') {
             menuPaths[data[i].router] = data[i];
           }
           if (data[i].children && data[i].children.length > 0) {
-            findPath(data[i].children);
+            fillData(data[i].children);
           }
         }
       }
-      findPath(menuData);
+      fillData(menuData);
 
-      yield put({
-        type: 'saveMenuPaths',
-        payload: menuPaths,
-      });
-
-      yield put({
-        type: 'menuEvent',
-        pathname,
-      });
+      yield [
+        put({
+          type: 'saveMenuPaths',
+          payload: menuPaths,
+        }),
+        put({
+          type: 'saveMenuMap',
+          payload: menuMap,
+        }),
+        put({
+          type: 'menuEvent',
+          pathname,
+        }),
+      ];
     },
   },
 
@@ -109,6 +117,9 @@ export default {
     },
     saveMenuPaths(state, { payload }) {
       return { ...state, menuPaths: payload };
+    },
+    saveMenuMap(state, { payload }) {
+      return { ...state, menuMap: payload };
     },
     saveMenus(state, { payload }) {
       return { ...state, menus: payload };
