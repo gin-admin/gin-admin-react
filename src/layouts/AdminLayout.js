@@ -45,6 +45,7 @@ const query = {
   selectedKeys: state.global.selectedKeys,
   user: state.global.user,
   menuPaths: state.global.menuPaths,
+  menuMap: state.global.menuMap,
   menus: state.global.menus,
   global: state.global,
 }))
@@ -91,9 +92,11 @@ class AdminLayout extends React.PureComponent {
   };
 
   onMenuOpenChange = openKeys => {
+    const { menuMap } = this.props;
+
     if (openKeys.length > 1) {
       const lastKey = openKeys[openKeys.length - 1];
-      if (lastKey.length === openKeys[0].length) {
+      if (!menuMap[lastKey].parent_path.startsWith(openKeys[0])) {
         this.dispatch({
           type: 'global/changeOpenKeys',
           payload: [lastKey],
@@ -246,6 +249,7 @@ class AdminLayout extends React.PureComponent {
             </Link>
           </div>
           <Menu
+            theme="dark"
             mode="inline"
             {...menuProps}
             onOpenChange={this.onMenuOpenChange}

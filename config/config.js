@@ -26,7 +26,7 @@ const plugins = [
               include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
               exclude: ['@babel/runtime'],
             },
-            hardSource: true,
+            hardSource: false,
           }
         : {}),
     },
@@ -45,7 +45,7 @@ export default {
   // Theme for antd
   // https://ant.design/docs/react/customize-theme-cn
   theme: {
-    'primary-color': '#FA8C16',
+    'primary-color': '#2F54EB',
   },
   proxy: {
     '/api/': {
