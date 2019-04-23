@@ -93,10 +93,31 @@ class AdminLayout extends React.PureComponent {
 
   onMenuOpenChange = openKeys => {
     const { menuMap } = this.props;
-
     if (openKeys.length > 1) {
       const lastKey = openKeys[openKeys.length - 1];
-      if (!menuMap[lastKey].parent_path.startsWith(openKeys[0])) {
+      const lastItem = menuMap[lastKey];
+      if (!lastItem) {
+        this.dispatch({
+          type: 'global/changeOpenKeys',
+          payload: [],
+        });
+        return;
+      }
+
+      let isParent = false;
+      for (let i = 0; i < openKeys.length - 1; i += 1) {
+        const item = menuMap[openKeys[i]] || {};
+        let path = item.record_id;
+        if (item.parent_path !== '') {
+          path = `${item.parent_path}/${path}`;
+        }
+        if (lastItem.parent_path === path) {
+          isParent = true;
+          break;
+        }
+      }
+
+      if (!isParent) {
         this.dispatch({
           type: 'global/changeOpenKeys',
           payload: [lastKey],
@@ -104,6 +125,7 @@ class AdminLayout extends React.PureComponent {
         return;
       }
     }
+
     this.dispatch({
       type: 'global/changeOpenKeys',
       payload: [...openKeys],

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Table, Button, Popconfirm } from 'antd';
 import { newUUID } from '@/utils/utils';
 import { EditableCell, EditableFormRow } from './EditableCell';
+import AddDialog from './AddDialog';
 
 import styles from './index.less';
 
@@ -66,6 +67,7 @@ export default class MenuAction extends PureComponent {
 
     this.state = {
       dataSource: fillKey(props.value),
+      addVisible: false,
     };
   }
 
@@ -76,12 +78,83 @@ export default class MenuAction extends PureComponent {
     return state;
   }
 
+  handleAddCancel = () => {
+    this.setState({ addVisible: false });
+  };
+
+  handleAddSubmit = item => {
+    const tplData = [
+      {
+        code: 'query',
+        name: `查询${item.name}`,
+        method: 'GET',
+        path: item.router,
+      },
+      {
+        code: 'get',
+        name: `精确查询${item.name}`,
+        method: 'GET',
+        path: `${item.router}/:id`,
+      },
+      {
+        code: 'create',
+        name: `创建${item.name}`,
+        method: 'POST',
+        path: item.router,
+      },
+      {
+        code: 'update',
+        name: `更新${item.name}`,
+        method: 'PUT',
+        path: `${item.router}/:id`,
+      },
+      {
+        code: 'delete',
+        name: `删除${item.name}`,
+        method: 'DELETE',
+        path: `${item.router}/:id`,
+      },
+    ];
+
+    const newData = tplData.map(v => ({ key: v.code, ...v }));
+
+    const { dataSource } = this.state;
+    const data = [...dataSource];
+    for (let i = 0; i < newData.length; i += 1) {
+      let exists = false;
+      for (let j = 0; j < dataSource.length; j += 1) {
+        if (dataSource[j].key === newData[i].key) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        data.push(newData[i]);
+      }
+    }
+
+    this.setState(
+      {
+        dataSource: data,
+      },
+      () => {
+        this.triggerChange(data);
+      }
+    );
+
+    this.handleAddCancel();
+  };
+
   handleDelete = key => {
     const { dataSource } = this.state;
     const data = dataSource.filter(item => item.key !== key);
     this.setState({ dataSource: data }, () => {
       this.triggerChange(data);
     });
+  };
+
+  handleAddTpl = () => {
+    this.setState({ addVisible: true });
   };
 
   handleAdd = () => {
@@ -127,7 +200,7 @@ export default class MenuAction extends PureComponent {
   };
 
   render() {
-    const { dataSource } = this.state;
+    const { dataSource, addVisible } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
@@ -155,6 +228,9 @@ export default class MenuAction extends PureComponent {
           <Button onClick={this.handleAdd} size="small" type="primary">
             新增
           </Button>
+          <Button onClick={this.handleAddTpl} size="small" type="primary">
+            使用模板
+          </Button>
         </div>
         <Table
           components={components}
@@ -162,6 +238,11 @@ export default class MenuAction extends PureComponent {
           dataSource={dataSource}
           columns={columns}
           pagination={false}
+        />
+        <AddDialog
+          visible={addVisible}
+          onCancel={this.handleAddCancel}
+          onSubmit={this.handleAddSubmit}
         />
       </div>
     );

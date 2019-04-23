@@ -76,6 +76,53 @@ export default class MenuAction extends PureComponent {
     });
   };
 
+  handleAddTpl = () => {
+    const tplData = [
+      {
+        code: 'add',
+        name: '新增',
+      },
+      {
+        code: 'edit',
+        name: '编辑',
+      },
+      {
+        code: 'del',
+        name: '删除',
+      },
+      {
+        code: 'query',
+        name: '查询',
+      },
+    ];
+
+    const newData = tplData.map(v => ({ key: v.code, ...v }));
+
+    const { dataSource } = this.state;
+    const data = [...dataSource];
+    for (let i = 0; i < newData.length; i += 1) {
+      let exists = false;
+      for (let j = 0; j < dataSource.length; j += 1) {
+        if (dataSource[j].key === newData[i].key) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        data.push(newData[i]);
+      }
+    }
+
+    this.setState(
+      {
+        dataSource: data,
+      },
+      () => {
+        this.triggerChange(data);
+      }
+    );
+  };
+
   handleAdd = () => {
     const { dataSource } = this.state;
     const item = {
@@ -143,6 +190,9 @@ export default class MenuAction extends PureComponent {
         <div className={styles.tableListOperator}>
           <Button onClick={this.handleAdd} size="small" type="primary">
             新增
+          </Button>
+          <Button onClick={this.handleAddTpl} size="small" type="primary">
+            使用模板
           </Button>
         </div>
         <Table
