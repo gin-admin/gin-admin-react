@@ -1,4 +1,4 @@
-import request from '../utils/request';
+import request, { baseURL } from '../utils/request';
 
 // 验证码ID
 export async function captchaID() {
@@ -7,7 +7,7 @@ export async function captchaID() {
 
 // 图形验证码
 export function captcha(id) {
-  return `/api/v1/login/captcha?id=${id}`;
+  return `${baseURL}/v1/login/captcha?id=${id}`;
 }
 
 // 登录

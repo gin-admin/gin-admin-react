@@ -3,6 +3,8 @@ import { notification } from 'antd';
 import moment from 'moment';
 import store from './store';
 
+export const baseURL = '/api';
+
 function checkAccessTokenExpires(expiresAt) {
   const now = moment().unix();
   if (expiresAt - now <= 0) {
@@ -23,7 +25,7 @@ async function getAccessToken() {
   if (checkAccessTokenExpires(tokenInfo.expires_at) === 0) {
     return axios
       .request({
-        url: '/api/v1/refresh_token',
+        url: `${baseURL}/v1/refresh_token`,
         method: 'POST',
         headers: {
           Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
@@ -44,7 +46,7 @@ async function getAccessToken() {
 export default async function request(url, options) {
   let showNotify = true;
   const opts = {
-    baseURL: '/api',
+    baseURL,
     url,
     validateStatus() {
       return true;
