@@ -13,14 +13,14 @@
 ```
 git clone https://github.com/LyricTian/gin-admin-react.git
 cd gin-admin-react
-npm install
-npm start
+yarn
+yarn start
 ```
 
 ## 打包编译
 
 ```
-npm run build
+yarn run build
 ```
 
 ## MIT License

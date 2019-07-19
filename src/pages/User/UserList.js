@@ -87,7 +87,13 @@ class UserList extends PureComponent {
     });
   };
 
-  onTableSelectRow = (keys, rows) => {
+  handleTableSelectRow = (selectedRowKeys, selectedRows) => {
+    let keys = [];
+    let rows = [];
+    if (selectedRowKeys.length > 0 && selectedRows.length > 0) {
+      keys = [selectedRowKeys[selectedRowKeys.length - 1]];
+      rows = [selectedRows[selectedRows.length - 1]];
+    }
     this.setState({
       selectedRowKeys: keys,
       selectedRows: rows,
@@ -333,7 +339,7 @@ class UserList extends PureComponent {
               <Table
                 rowSelection={{
                   selectedRowKeys,
-                  onChange: this.onTableSelectRow,
+                  onChange: this.handleTableSelectRow,
                 }}
                 loading={loading}
                 rowKey={record => record.record_id}

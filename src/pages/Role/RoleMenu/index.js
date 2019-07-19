@@ -92,29 +92,90 @@ export default class RoleMenu extends PureComponent {
     }
   };
 
-  handleSelectedRow = (_, rows) => {
-    const { dataSource } = this.state;
-    const list = [];
+  expandAllChild = data => {
+    let child = [];
+    for (let i = 0; i < data.length; i += 1) {
+      child.push(data[i]);
+      if (data[i].children) {
+        child = [...child, ...this.expandAllChild(data[i].children)];
+      }
+    }
+    return child;
+  };
 
-    for (let i = 0; i < rows.length; i += 1) {
+  checkAndAdd = (data, addData) => {
+    const list = [...data];
+
+    for (let i = 0; i < addData.length; i += 1) {
       let exists = false;
-      for (let j = 0; j < dataSource.length; j += 1) {
-        if (dataSource[j].menu_id === rows[i].record_id) {
+      for (let j = 0; j < list.length; j += 1) {
+        if (list[j].menu_id === addData[i].record_id) {
           exists = true;
-          list.push({ ...dataSource[j] });
           break;
         }
       }
 
       if (!exists) {
-        list.push({
-          menu_id: rows[i].record_id,
-          actions: rows[i].actions ? rows[i].actions.map(v => v.code) : [],
-          resources: rows[i].resources ? rows[i].resources.map(v => v.code) : [],
-        });
+        const item = {
+          menu_id: addData[i].record_id,
+          actions: addData[i].actions ? addData[i].actions.map(v => v.code) : [],
+          resources: addData[i].resources ? addData[i].resources.map(v => v.code) : [],
+        };
+        list.push(item);
       }
     }
 
+    return list;
+  };
+
+  cancelSelected = (data, selectedRows) => {
+    const list = [];
+    for (let i = 0; i < data.length; i += 1) {
+      let exists = false;
+      for (let j = 0; j < selectedRows.length; j += 1) {
+        if (data[i].menu_id === selectedRows[j].record_id) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        list.push(data[i]);
+      }
+    }
+    return list;
+  };
+
+  handleSelectedRow = (record, selected) => {
+    let selectedRows = [record];
+    if (record.children) {
+      selectedRows = [...selectedRows, ...this.expandAllChild(record.children)];
+    }
+
+    const { dataSource } = this.state;
+    let list = [];
+    if (selected) {
+      list = this.checkAndAdd(dataSource, selectedRows);
+    } else {
+      list = this.cancelSelected(dataSource, selectedRows);
+    }
+
+    this.setState({ dataSource: list }, () => {
+      this.triggerChange(list);
+    });
+  };
+
+  handleSelectAll = (selected, selectRows) => {
+    let list = [];
+    if (selected) {
+      list = selectRows.map(vv => {
+        const item = {
+          menu_id: vv.record_id,
+          actions: vv.actions ? vv.actions.map(v => v.code) : [],
+          resources: vv.resources ? vv.resources.map(v => v.code) : [],
+        };
+        return item;
+      });
+    }
     this.setState({ dataSource: list }, () => {
       this.triggerChange(list);
     });
@@ -149,10 +210,8 @@ export default class RoleMenu extends PureComponent {
           defaultExpandAllRows
           rowSelection={{
             selectedRowKeys: dataSource.map(v => v.menu_id),
-            onChange: this.handleSelectedRow,
-            getCheckboxProps: record => ({
-              disabled: record.hasChild,
-            }),
+            onSelect: this.handleSelectedRow,
+            onSelectAll: this.handleSelectAll,
           }}
           rowKey={record => record.record_id}
           components={components}
