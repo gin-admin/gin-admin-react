@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, Row, Col, Tooltip, Icon } from 'antd';
 
 @Form.create()
 class AddDialog extends PureComponent {
@@ -38,8 +38,8 @@ class AddDialog extends PureComponent {
 
     return (
       <Modal
-        title="资源模板"
-        width={400}
+        title="菜单资源模板"
+        width={450}
         visible={visible}
         maskClosable={false}
         destroyOnClose
@@ -50,24 +50,42 @@ class AddDialog extends PureComponent {
       >
         <Form>
           <Form.Item {...formItemLayout} label="资源名">
-            {getFieldDecorator('name', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入资源名',
-                },
-              ],
-            })(<Input placeholder="请输入资源名" />)}
+            <Row>
+              <Col span={20}>
+                {getFieldDecorator('name', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入资源名',
+                    },
+                  ],
+                })(<Input placeholder="请输入资源名" />)}
+              </Col>
+              <Col span={4} style={{ textAlign: 'center' }}>
+                <Tooltip title="例：用户数据">
+                  <Icon type="question-circle" />
+                </Tooltip>
+              </Col>
+            </Row>
           </Form.Item>
           <Form.Item {...formItemLayout} label="资源路由">
-            {getFieldDecorator('router', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入资源路由',
-                },
-              ],
-            })(<Input placeholder="请输入资源路由" />)}
+            <Row>
+              <Col span={20}>
+                {getFieldDecorator('router', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入资源路由',
+                    },
+                  ],
+                })(<Input placeholder="请输入资源路由" />)}
+              </Col>
+              <Col span={4} style={{ textAlign: 'center' }}>
+                <Tooltip title="例：/api/v1/users">
+                  <Icon type="question-circle" />
+                </Tooltip>
+              </Col>
+            </Row>
           </Form.Item>
         </Form>
       </Modal>

@@ -25,7 +25,7 @@ async function getAccessToken() {
   if (checkAccessTokenExpires(tokenInfo.expires_at) === 0) {
     return axios
       .request({
-        url: `${baseURL}/v1/refresh_token`,
+        url: `${baseURL}/v1/pub/refresh_token`,
         method: 'POST',
         headers: {
           Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,

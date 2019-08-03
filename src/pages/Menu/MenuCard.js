@@ -73,7 +73,7 @@ class MenuCard extends PureComponent {
     return (
       <Modal
         title={formTitle}
-        width={850}
+        width={900}
         visible={formVisible}
         maskClosable={false}
         confirmLoading={submitting}
