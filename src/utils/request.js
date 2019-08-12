@@ -73,9 +73,14 @@ export default async function request(url, options) {
     }
 
     if (status === 401) {
-      /* eslint-disable no-underscore-dangle */
-      window.g_app._store.dispatch({ type: 'login/logout' });
-      return {};
+      const {
+        error: { code },
+      } = data;
+      if (code === 9999) {
+        /* eslint-disable no-underscore-dangle */
+        window.g_app._store.dispatch({ type: 'login/logout' });
+        return {};
+      }
     }
 
     const error = {
@@ -96,7 +101,8 @@ export default async function request(url, options) {
 
     if (showNotify) {
       notification.error({
-        message: error.message,
+        message: `${opts.baseURL}${opts.url}`,
+        description: error.message,
       });
     }
 
