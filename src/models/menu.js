@@ -21,9 +21,7 @@ export default {
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
-      let params = {
-        q: 'page',
-      };
+      let params = {};
 
       if (search) {
         params = { ...params, ...search };
@@ -158,13 +156,11 @@ export default {
       }
     },
     *fetchTree({ payload }, { call, put }) {
-      let params = {
-        q: 'tree',
-      };
+      let params = {};
       if (payload) {
         params = { ...params, ...payload };
       }
-      const response = yield call(menuService.query, params);
+      const response = yield call(menuService.queryTree, params);
       yield put({
         type: 'saveTreeData',
         payload: response.list || [],

@@ -74,7 +74,7 @@ export default {
           .split('/')
           .map(a => a.replace(/([A-Z])/g, '-$1'))
           .map(a => a.toLowerCase());
-        return `web${arr.join('-')}-${localName}`.replace(/--/g, '-');
+        return `gin-admin${arr.join('-')}-${localName}`.replace(/--/g, '-');
       }
       return localName;
     },

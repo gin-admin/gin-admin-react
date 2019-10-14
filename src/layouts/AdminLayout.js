@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout, Menu, Icon, Avatar, Dropdown, Spin } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Link from 'umi/link';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
@@ -158,10 +159,11 @@ class AdminLayout extends React.PureComponent {
     }
 
     return menusData.map(item => {
-      if (!item.name) {
+      if (!item.name || item.hidden !== 0) {
         return null;
       }
-      if (item.children && item.children.some(child => child.name)) {
+
+      if (item.children && item.children.some(child => child.name && child.hidden === 0)) {
         return (
           <SubMenu
             title={

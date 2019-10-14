@@ -19,9 +19,7 @@ export default {
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
-      let params = {
-        q: 'page',
-      };
+      let params = {};
 
       if (search) {
         params = { ...params, ...search };
@@ -147,10 +145,7 @@ export default {
       }
     },
     *fetchSelect(_, { call, put }) {
-      const params = {
-        q: 'select',
-      };
-      const response = yield call(roleService.query, params);
+      const response = yield call(roleService.querySelect);
       yield put({
         type: 'saveSelectData',
         payload: response.list || [],

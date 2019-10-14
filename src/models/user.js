@@ -17,9 +17,7 @@ export default {
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
-      let params = {
-        q: 'page',
-      };
+      let params = {};
 
       if (search) {
         params = { ...params, ...search };

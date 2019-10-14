@@ -7,6 +7,10 @@ export async function query(params) {
   return request(`/v1/${router}?${stringify(params)}`);
 }
 
+export async function queryTree(params) {
+  return request(`/v1/${router}.tree?${stringify(params)}`);
+}
+
 export async function get(params) {
   return request(`/v1/${router}/${params.record_id}`);
 }

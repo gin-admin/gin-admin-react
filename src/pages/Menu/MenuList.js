@@ -303,11 +303,11 @@ class MenuList extends PureComponent {
                 } = this.props;
 
                 const item = {
-                  parent_id: '',
+                  parentID: '',
                 };
 
                 if (keys.length > 0) {
-                  [item.parent_id] = keys;
+                  [item.parentID] = keys;
                 }
 
                 this.dispatch({

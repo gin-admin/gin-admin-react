@@ -7,6 +7,10 @@ export async function query(params) {
   return request(`/v1/${router}?${stringify(params)}`);
 }
 
+export async function querySelect(params) {
+  return request(`/v1/${router}.select?${stringify(params)}`);
+}
+
 export async function get(params) {
   return request(`/v1/${router}/${params.record_id}`);
 }

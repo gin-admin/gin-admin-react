@@ -35,7 +35,7 @@ export default class RoleMenu extends PureComponent {
   }
 
   componentDidMount() {
-    menuService.query({ q: 'tree', include_actions: '1', include_resources: '1' }).then(data => {
+    menuService.queryTree({ includeActions: '1', includeResources: '1' }).then(data => {
       const list = data.list || [];
       this.setState({ menuData: this.fillData(list) });
     });
