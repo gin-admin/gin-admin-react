@@ -1,18 +1,24 @@
-import React, {PureComponent} from 'react';
-import {Form, Input, Modal, message} from 'antd';
-import {md5Hash} from '@/utils/utils';
-import {updatePwd} from '@/services/login';
-import {AnyAction, Dispatch} from "redux";
+import { AnyAction, Dispatch } from 'redux';
+import { Form, Input, Modal, message } from 'antd';
+import React, { PureComponent } from 'react';
+
+import { md5Hash } from '@/utils/utils';
+import { updatePwd } from '@/services/login';
 
 // @ts-ignore
 @Form.create()
-class UpdatePasswordDialog extends PureComponent<{ form?: any, onCancel: any, dispatch?: Dispatch<AnyAction> ,visible:any}> {
+class UpdatePasswordDialog extends PureComponent<{
+  form?: any;
+  onCancel: any;
+  dispatch?: Dispatch<AnyAction>;
+  visible: any;
+}> {
   state = {
     submitting: false,
   };
 
   onOKClick = () => {
-    const {form} = this.props;
+    const { form } = this.props;
 
     form.validateFieldsAndScroll((err: any, values: any) => {
       if (err) {
@@ -23,7 +29,7 @@ class UpdatePasswordDialog extends PureComponent<{ form?: any, onCancel: any, di
         return;
       }
 
-      this.setState({submitting: true});
+      this.setState({ submitting: true });
       const formData = {
         old_password: md5Hash(values.old_password),
         new_password: md5Hash(values.new_password),
@@ -33,25 +39,34 @@ class UpdatePasswordDialog extends PureComponent<{ form?: any, onCancel: any, di
           message.success('密码更新成功！');
           this.handleCancel();
         }
-        this.setState({submitting: false});
+        this.setState({ submitting: false });
       });
     });
   };
 
   handleCancel = () => {
-    const {onCancel} = this.props;
+    const { onCancel } = this.props;
     if (onCancel) {
       onCancel();
     }
   };
 
   dispatch = (action: any) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     // @ts-ignore
     dispatch(action);
   };
 
-  render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+  render():
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | string
+    | number
+    | {}
+    | React.ReactNodeArray
+    | React.ReactPortal
+    | boolean
+    | null
+    | undefined {
     const {
       visible,
       form: { getFieldDecorator },

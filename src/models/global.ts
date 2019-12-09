@@ -1,7 +1,8 @@
-import {Reducer} from 'redux';
-import {Subscription, Effect} from 'dva';
 import * as loginService from '@/services/login';
 
+import { Effect, Subscription } from 'dva';
+
+import { Reducer } from 'redux';
 
 export interface CurrentUser {
   user_name: string;
@@ -80,8 +81,8 @@ const GlobalModel: GlobalModelType = {
     openKeys: [],
     selectedKeys: [],
     user: {
-      user_name: 'admin',
-      real_name: '管理员',
+      user_name: 'root',
+      real_name: '超级管理员',
       role_names: [],
     },
     menuPaths: {},
@@ -90,13 +91,15 @@ const GlobalModel: GlobalModelType = {
   },
 
   effects: {
-    * menuEvent({pathname}, {put, select}) {
+    *menuEvent({ pathname }, { put, select }) {
       let p = pathname;
       if (p === '/') {
-        p = yield select((state: { global: { defaultURL: string; }; }) => state.global.defaultURL);
+        p = yield select((state: { global: { defaultURL: string } }) => state.global.defaultURL);
       }
 
-      const menuPaths = yield select((state: { global: { menuPaths: any; }; }) => state.global.menuPaths);
+      const menuPaths = yield select(
+        (state: { global: { menuPaths: any } }) => state.global.menuPaths,
+      );
       const item = menuPaths[p];
       if (!item) {
         return;
@@ -114,14 +117,14 @@ const GlobalModel: GlobalModelType = {
         payload: [item.record_id],
       });
     },
-    * fetchUser(_, {call, put}) {
+    *fetchUser(_, { call, put }) {
       const response = yield call(loginService.getCurrentUser);
       yield put({
         type: 'saveUser',
         payload: response,
       });
     },
-    * fetchMenuTree({pathname}, {call, put}) {
+    *fetchMenuTree({ pathname }, { call, put }) {
       const response = yield call(loginService.queryMenuTree);
       const menuData = response.list || [];
       yield put({
@@ -160,17 +163,17 @@ const GlobalModel: GlobalModelType = {
           pathname,
         }),
       ];
-    }
+    },
   },
 
   reducers: {
-    changeLayoutCollapsed(state, {payload}): GlobalModelState {
+    changeLayoutCollapsed(state, { payload }): GlobalModelState {
       return {
         ...state,
         collapsed: payload,
       };
     },
-    changeOpenKeys(state, {payload}) {
+    changeOpenKeys(state, { payload }) {
       return {
         ...state,
         openKeys: payload,
@@ -197,9 +200,9 @@ const GlobalModel: GlobalModelType = {
   },
 
   subscriptions: {
-    setup({history}): void {
+    setup({ history }): void {
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
-      history.listen(({pathname, search}): void => {
+      history.listen(({ pathname, search }): void => {
         if (typeof window.ga !== 'undefined') {
           window.ga('send', 'pageview', pathname + search);
         }

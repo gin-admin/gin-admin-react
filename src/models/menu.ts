@@ -1,20 +1,21 @@
-import { message } from 'antd';
 import * as menuService from '@/services/menu';
-import {Effect} from "dva";
-import {Reducer} from "redux";
+
+import { Effect } from 'dva';
+import { Reducer } from 'redux';
+import { message } from 'antd';
 
 export interface MenuModelState {
-  search?:any,
-  pagination?:any,
-  data?:{list:any,pagination:any},
-  submitting?:boolean,
-  formType?:string,
-  formTitle?:string,
-  formID?:string,
-  formVisible?:boolean,
-  formData?:any,
-  treeData?:any,
-  expandedKeys?:any,
+  search?: any;
+  pagination?: any;
+  data?: { list: any; pagination: any };
+  submitting?: boolean;
+  formType?: string;
+  formTitle?: string;
+  formID?: string;
+  formVisible?: boolean;
+  formData?: any;
+  treeData?: any;
+  expandedKeys?: any;
 }
 
 export interface MenuModelType {
@@ -24,9 +25,9 @@ export interface MenuModelType {
     fetch: Effect;
     loadForm: Effect;
     fetchForm: Effect;
-    submit:Effect;
-    del:Effect;
-    fetchTree:Effect;
+    submit: Effect;
+    del: Effect;
+    fetchTree: Effect;
   };
   reducers: {
     saveData: Reducer<MenuModelState>;
@@ -43,12 +44,12 @@ export interface MenuModelType {
   };
 }
 
-const MenuModel:MenuModelType = {
+const MenuModel: MenuModelType = {
   namespace: 'menu',
-  state:{
-    search:{},
-    pagination:{},
-    data:{
+  state: {
+    search: {},
+    pagination: {},
+    data: {
       list: [],
       pagination: {},
     },
@@ -61,46 +62,45 @@ const MenuModel:MenuModelType = {
     treeData: [],
     expandedKeys: [],
   },
-  effects:{
+  effects: {
     *fetch({ search, pagination }, { call, put, select }) {
-      let params = {
-      };
-      if(search){
-        params = {...params,...search};
+      let params = {};
+      if (search) {
+        params = { ...params, ...search };
         yield put({
-          type:'saveSearch',
-          payload:search,
+          type: 'saveSearch',
+          payload: search,
         });
       } else {
-        const s = yield select((state:any)=> state.menu.search);
-        if(s){
-          params = {...params,...s};
+        const s = yield select((state: any) => state.menu.search);
+        if (s) {
+          params = { ...params, ...s };
         }
       }
 
-      if(pagination) {
-        params = {...params,...pagination};
+      if (pagination) {
+        params = { ...params, ...pagination };
         yield put({
-          type:'savePagination',
-          payload:pagination,
+          type: 'savePagination',
+          payload: pagination,
         });
       } else {
-        const p = yield select((state:any)=>state.menu.pagination);
-        if(p){
-          params = {...params,...p};
+        const p = yield select((state: any) => state.menu.pagination);
+        if (p) {
+          params = { ...params, ...p };
         }
       }
 
-      const response = yield call(menuService.query,params);
+      const response = yield call(menuService.query, params);
       yield put({
-        type:'saveData',
-        payload:response,
+        type: 'saveData',
+        payload: response,
       });
     },
     *loadForm({ payload }, { put, select }) {
       yield put({
-        type:'changeFormVisible',
-        payload:true,
+        type: 'changeFormVisible',
+        payload: true,
       });
 
       yield [
@@ -123,7 +123,7 @@ const MenuModel:MenuModelType = {
         put({ type: 'fetchTree' }),
       ];
 
-      if(payload.type === 'E'){
+      if (payload.type === 'E') {
         yield [
           put({
             type: 'saveFormTitle',
@@ -139,10 +139,10 @@ const MenuModel:MenuModelType = {
           }),
         ];
       } else {
-        const search = yield select((state:any) => state.menu.search);
+        const search = yield select((state: any) => state.menu.search);
         yield put({
           type: 'saveFormData',
-          payload: { parent_id: search.parent_id ? search.parent_id : '' },
+          payload: { parent_id: search.parentID ? search.parentID : '' },
         });
       }
     },
@@ -160,11 +160,11 @@ const MenuModel:MenuModelType = {
       });
 
       const params = { ...payload };
-      const formType = yield select((state:any) => state.menu.formType);
+      const formType = yield select((state: any) => state.menu.formType);
       let success = false;
       let response;
       if (formType === 'E') {
-        params.record_id = yield select((state:any) => state.menu.formID);
+        params.record_id = yield select((state: any) => state.menu.formID);
         response = yield call(menuService.update, params);
       } else {
         response = yield call(menuService.create, params);
@@ -198,8 +198,7 @@ const MenuModel:MenuModelType = {
       }
     },
     *fetchTree({ payload }, { call, put }) {
-      let params = {
-      };
+      let params = {};
       if (payload) {
         params = { ...params, ...payload };
       }
@@ -208,9 +207,9 @@ const MenuModel:MenuModelType = {
         type: 'saveTreeData',
         payload: response.list || [],
       });
-    }
+    },
   },
-  reducers:{
+  reducers: {
     saveData(state, { payload }) {
       return { ...state, data: payload };
     },

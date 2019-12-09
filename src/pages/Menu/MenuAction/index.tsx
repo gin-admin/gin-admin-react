@@ -1,8 +1,8 @@
-import React, {PureComponent} from 'react';
-import {Table, Button, Popconfirm} from 'antd';
-import {newUUID} from '@/utils/utils';
-import {EditableCell, EditableFormRow} from './EditableCell';
+import { Button, Popconfirm, Table } from 'antd';
+import React, { PureComponent } from 'react';
+import { EditableCell, EditableFormRow } from './EditableCell';
 
+import { newUUID } from '@/utils/utils';
 import styles from './index.less';
 
 function fillKey(data: any) {
@@ -10,7 +10,7 @@ function fillKey(data: any) {
     return [];
   }
   return data.map((item: any) => {
-    const nitem = {...item};
+    const nitem = { ...item };
     if (!nitem.key) {
       nitem.key = newUUID();
     }
@@ -19,12 +19,12 @@ function fillKey(data: any) {
 }
 
 interface MenuActionProps {
-  value?: any,
-  onChange?:any,
+  value?: any;
+  onChange?: any;
 }
 
 interface MenuActionState {
-  dataSource: any,
+  dataSource: any;
 }
 
 export default class MenuAction extends PureComponent<MenuActionProps, MenuActionState> {
@@ -55,7 +55,7 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
         dataIndex: 'key',
         width: '10%',
         render: (_: any, record: any) => {
-          const {dataSource} = this.state;
+          const { dataSource } = this.state;
           if (dataSource.length === 0) {
             return null;
           }
@@ -80,9 +80,9 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
   }
 
   handleDelete = (key: any) => {
-    const {dataSource} = this.state;
+    const { dataSource } = this.state;
     const data = dataSource.filter((item: any) => item.key !== key);
-    this.setState({dataSource: data}, () => {
+    this.setState({ dataSource: data }, () => {
       this.triggerChange(data);
     });
   };
@@ -107,9 +107,9 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
       },
     ];
 
-    const newData = tplData.map(v => ({key: v.code, ...v}));
+    const newData = tplData.map(v => ({ key: v.code, ...v }));
 
-    const {dataSource} = this.state;
+    const { dataSource } = this.state;
     const data = [...dataSource];
     for (let i = 0; i < newData.length; i += 1) {
       let exists = false;
@@ -130,12 +130,12 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
       },
       () => {
         this.triggerChange(data);
-      }
+      },
     );
   };
 
   handleAdd = () => {
-    const {dataSource} = this.state;
+    const { dataSource } = this.state;
     const item = {
       key: newUUID(),
       code: '',
@@ -148,12 +148,12 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
       },
       () => {
         this.triggerChange(data);
-      }
+      },
     );
   };
 
   handleSave = (row: any) => {
-    const {dataSource} = this.state;
+    const { dataSource } = this.state;
     const data = [...dataSource];
     const index = data.findIndex(item => row.key === item.key);
     const item = data[index];
@@ -161,33 +161,33 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
       ...item,
       ...row,
     });
-    this.setState({dataSource: data}, () => {
+    this.setState({ dataSource: data }, () => {
       this.triggerChange(data);
     });
   };
 
   triggerChange = (data: any) => {
-    const {onChange} = this.props;
+    const { onChange } = this.props;
     if (onChange) {
       onChange(data);
     }
   };
 
   render() {
-    const {dataSource} = this.state;
+    const { dataSource } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
         cell: EditableCell,
       },
     };
-    const columns = this.columns.map((col:any) => {
+    const columns = this.columns.map((col: any) => {
       if (!col.editable) {
         return col;
       }
       return {
         ...col,
-        onCell: (record:any) => ({
+        onCell: (record: any) => ({
           record,
           editable: col.editable,
           dataIndex: col.dataIndex,
@@ -207,7 +207,7 @@ export default class MenuAction extends PureComponent<MenuActionProps, MenuActio
           </Button>
         </div>
         <Table
-          rowKey={(record:any) => record.key}
+          rowKey={(record: any) => record.key}
           components={components}
           bordered
           dataSource={dataSource}

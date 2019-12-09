@@ -1,23 +1,23 @@
-import React, {PureComponent} from "react";
-import {connect} from 'dva';
-import {ConnectState} from "@/models/connect";
-import {AnyAction, Dispatch} from "redux";
-import {StateType} from "@/models/login";
-import {Alert, Button, Form, Icon, Input} from "antd";
-import {md5Hash} from '@/utils/utils';
+import { Alert, Button, Form, Icon, Input } from 'antd';
+import { AnyAction, Dispatch } from 'redux';
+import React, { PureComponent } from 'react';
+
+import { ConnectState } from '@/models/connect';
 import { FormComponentProps } from 'antd/es/form';
+import { StateType } from '@/models/login';
+import { connect } from 'dva';
+import { md5Hash } from '@/utils/utils';
+import styles from './Login.less';
 
-import styles from './Index.less';
-
-export interface LoginProps extends FormComponentProps{
+export interface LoginProps extends FormComponentProps {
   dispatch: Dispatch<AnyAction>;
   login: StateType;
 }
 
-@connect(({login}: ConnectState) => ({
+@connect(({ login }: ConnectState) => ({
   login,
 }))
-class Login extends PureComponent<LoginProps > {
+class Login extends PureComponent<LoginProps> {
   componentDidMount(): void {
     this.dispatch({
       type: 'login/loadCaptcha',
@@ -30,11 +30,11 @@ class Login extends PureComponent<LoginProps > {
     });
   };
 
-  handleSubmit = (e: { preventDefault: () => void; }) => {
+  handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    const {form, dispatch, login} = this.props;
-    form.validateFields({force: true}, (err: any, values: any) => {
+    const { form, dispatch, login } = this.props;
+    form.validateFields({ force: true }, (err: any, values: any) => {
       if (!err) {
         dispatch({
           type: 'login/submit',
@@ -50,17 +50,17 @@ class Login extends PureComponent<LoginProps > {
   };
 
   dispatch = (action: any) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(action);
   };
 
   renderMessage = (type: any, message: any) => (
-    <Alert style={{marginBottom: 24}} message={message} type={type} closable/>
+    <Alert style={{ marginBottom: 24 }} message={message} type={type} closable />
   );
 
   render() {
     const {
-      form: {getFieldDecorator},
+      form: { getFieldDecorator },
       login,
     } = this.props;
 
@@ -68,12 +68,12 @@ class Login extends PureComponent<LoginProps > {
       <div className={styles.main}>
         <Form onSubmit={this.handleSubmit}>
           {login.status === 'FAIL' &&
-          login.submitting === false &&
-          this.renderMessage('warning', login.tip)}
+            login.submitting === false &&
+            this.renderMessage('warning', login.tip)}
 
           {login.status === 'ERROR' &&
-          login.submitting === false &&
-          this.renderMessage('error', login.tip)}
+            login.submitting === false &&
+            this.renderMessage('error', login.tip)}
 
           <Form.Item>
             {getFieldDecorator('user_name', {
@@ -86,9 +86,9 @@ class Login extends PureComponent<LoginProps > {
             })(
               <Input
                 size="large"
-                prefix={<Icon type="user" className={styles.prefixIcon}/>}
+                prefix={<Icon type="user" className={styles.prefixIcon} />}
                 placeholder="请输入用户名"
-              />
+              />,
             )}
           </Form.Item>
 
@@ -103,10 +103,10 @@ class Login extends PureComponent<LoginProps > {
             })(
               <Input
                 size="large"
-                prefix={<Icon type="lock" className={styles.prefixIcon}/>}
+                prefix={<Icon type="lock" className={styles.prefixIcon} />}
                 type="password"
                 placeholder="请输入密码"
-              />
+              />,
             )}
           </Form.Item>
 
@@ -121,11 +121,11 @@ class Login extends PureComponent<LoginProps > {
                 ],
               })(
                 <Input
-                  style={{width: '60%', marginRight: 10}}
+                  style={{ width: '60%', marginRight: 10 }}
                   size="large"
-                  prefix={<Icon type="code" className={styles.prefixIcon}/>}
+                  prefix={<Icon type="code" className={styles.prefixIcon} />}
                   placeholder="请输入验证码"
-                />
+                />,
               )}
               <div
                 style={{
@@ -134,7 +134,7 @@ class Login extends PureComponent<LoginProps > {
                 }}
               >
                 <img
-                  style={{maxWidth: '100%', maxHeight: '100%'}}
+                  style={{ maxWidth: '100%', maxHeight: '100%' }}
                   src={login.captcha}
                   alt="验证码"
                   onClick={() => {
@@ -158,7 +158,7 @@ class Login extends PureComponent<LoginProps > {
           </Form.Item>
         </Form>
       </div>
-    )
+    );
   }
 }
 

@@ -2,7 +2,7 @@ const accessTokenKey = 'access_token';
 
 export default class store {
   // 设定访问令牌
-  static setAccessToken(token:any) {
+  static setAccessToken(token: any) {
     sessionStorage.setItem(accessTokenKey, JSON.stringify(token));
   }
 

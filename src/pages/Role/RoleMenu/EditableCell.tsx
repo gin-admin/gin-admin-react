@@ -1,18 +1,18 @@
-import React, {PureComponent} from 'react';
-import {Checkbox, Row, Col} from 'antd';
+import { Checkbox, Col, Row } from 'antd';
+import React, { PureComponent } from 'react';
 
 export interface EditableCellProps {
-  data: any,
-  record: any,
-  dataIndex: any,
-  handleSave: any,
-  menuData:any,
+  data: any;
+  record: any;
+  dataIndex: any;
+  handleSave: any;
+  menuData: any;
 }
 
 export default class EditableCell extends PureComponent<EditableCellProps> {
   findItem = () => {
-    const {data, record} = this.props;
-    for (let i = 0; i < data.length; i++) {
+    const { data, record } = this.props;
+    for (let i = 0; i < data.length; i += 1) {
       if (data[i].menu_id === record.record_id) {
         return data[i];
       }
@@ -21,11 +21,11 @@ export default class EditableCell extends PureComponent<EditableCellProps> {
   };
 
   handleChange = (values: any) => {
-    const {record, dataIndex, handleSave} = this.props;
+    const { record, dataIndex, handleSave } = this.props;
     handleSave(record, dataIndex, values);
   };
 
-  renderAction = ():any => {
+  renderAction = (): any => {
     const { record } = this.props;
     if (!record.actions || record.actions.length === 0) {
       return null;
@@ -38,7 +38,7 @@ export default class EditableCell extends PureComponent<EditableCellProps> {
         value={item ? item.actions : []}
         onChange={this.handleChange}
       >
-        {record.actions.map((v:any) => (
+        {record.actions.map((v: any) => (
           <Col key={v.code}>
             <Checkbox value={v.code}>{v.name}</Checkbox>
           </Col>
@@ -47,7 +47,7 @@ export default class EditableCell extends PureComponent<EditableCellProps> {
     );
   };
 
-  renderResource = ():any => {
+  renderResource = (): any => {
     const { record } = this.props;
     if (!record.resources || record.resources.length === 0) {
       return null;
@@ -61,7 +61,7 @@ export default class EditableCell extends PureComponent<EditableCellProps> {
         onChange={this.handleChange}
       >
         <Row>
-          {record.resources.map((v:any) => (
+          {record.resources.map((v: any) => (
             <Col key={v.code}>
               <Checkbox value={v.code}>{v.name}</Checkbox>
             </Col>
@@ -71,7 +71,16 @@ export default class EditableCell extends PureComponent<EditableCellProps> {
     );
   };
 
-  render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+  render():
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | string
+    | number
+    | {}
+    | React.ReactNodeArray
+    | React.ReactPortal
+    | boolean
+    | null
+    | undefined {
     const { dataIndex, record, menuData, handleSave, ...restProps } = this.props;
 
     return (

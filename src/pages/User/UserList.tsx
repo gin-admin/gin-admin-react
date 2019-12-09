@@ -1,37 +1,40 @@
-import React, {PureComponent} from 'react';
-import {connect} from 'dva';
-import {Row, Col, Card, Form, Input, Button, Table, Modal, Badge, Radio} from 'antd';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { AnyAction, Dispatch } from 'redux';
+import { Badge, Button, Card, Col, Form, Input, Modal, Radio, Row, Table } from 'antd';
+import { ConnectState, UserModelState } from '@/models/connect';
+import React, { PureComponent } from 'react';
+
+import { FormComponentProps } from 'antd/lib/form';
 import PButton from '@/components/PermButton';
-import UserCard from './UserCard';
+import { connect } from 'dva';
+import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import RoleSelect from './RoleSelect';
-import {formatDate} from '../../utils/utils';
-
+import UserCard from './UserCard';
+import { formatDate } from '../../utils/utils';
 import styles from './UserList.less';
-import {ConnectState, UserModelState} from "@/models/connect";
-import {FormComponentProps} from "antd/lib/form";
-import {AnyAction, Dispatch} from "redux";
 
-export interface UserListProps extends FormComponentProps{
-  dispatch: Dispatch<AnyAction>,
-  user:UserModelState,
-  loading:any
+export interface UserListProps extends FormComponentProps {
+  dispatch: Dispatch<AnyAction>;
+  user: UserModelState;
+  loading: any;
 }
 
 export interface UserListState {
-
+  selectedRowKeys: string[];
+  selectedRows: any[];
 }
 
 @connect((state: ConnectState) => ({
   loading: state.loading.models.user,
   user: state.user,
 }))
-class UserList extends PureComponent<UserListProps,UserListState> {
-
-  state = {
-    selectedRowKeys: new Array(0),
-    selectedRows: new Array(0),
-  };
+class UserList extends PureComponent<UserListProps, UserListState> {
+  constructor(props: UserListProps) {
+    super(props);
+    this.state = {
+      selectedRowKeys: [],
+      selectedRows: [],
+    };
+  }
 
   componentDidMount() {
     this.dispatch({
@@ -41,21 +44,21 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   }
 
-  onItemDisableClick = (item:any) => {
+  onItemDisableClick = (item: any) => {
     this.dispatch({
       type: 'user/changeStatus',
       payload: { record_id: item.record_id, status: 2 },
     });
   };
 
-  onItemEnableClick = (item:any) => {
+  onItemEnableClick = (item: any) => {
     this.dispatch({
       type: 'user/changeStatus',
       payload: { record_id: item.record_id, status: 1 },
     });
   };
 
-  onItemEditClick = (item:any) => {
+  onItemEditClick = (item: any) => {
     this.dispatch({
       type: 'user/loadForm',
       payload: {
@@ -74,7 +77,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   };
 
-  onDelOKClick(id:any) {
+  onDelOKClick(id: any) {
     this.dispatch({
       type: 'user/del',
       payload: { record_id: id },
@@ -90,7 +93,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     this.setState({ selectedRowKeys: [], selectedRows: [] });
   };
 
-  onItemDelClick = (item:any) => {
+  onItemDelClick = (item: any) => {
     Modal.confirm({
       title: `确定删除【用户数据：${item.user_name}】？`,
       okText: '确认',
@@ -100,12 +103,12 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   };
 
-  handleTableSelectRow = (record:any, selected:any) => {
+  handleTableSelectRow = (record: any, selected: any) => {
     let keys = new Array(0);
     let rows = new Array(0);
-    if(selected){
+    if (selected) {
       keys = [record.record_id];
-      rows = [record]
+      rows = [record];
     }
     this.setState({
       selectedRowKeys: keys,
@@ -113,7 +116,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   };
 
-  onTableChange = (pagination:any) => {
+  onTableChange = (pagination: any) => {
     this.dispatch({
       type: 'user/fetch',
       pagination: {
@@ -134,7 +137,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   };
 
-  onSearchFormSubmit = (e:any) => {
+  onSearchFormSubmit = (e: any) => {
     if (e) {
       e.preventDefault();
     }
@@ -146,7 +149,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
 
       let roleIDs = '';
       if (values.role_ids) {
-        roleIDs = values.role_ids.map((v:any) => v.role_id).join(',');
+        roleIDs = values.role_ids.map((v: any) => v.role_id).join(',');
       }
       this.dispatch({
         type: 'user/fetch',
@@ -160,7 +163,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   };
 
-  onDataFormSubmit = (data:any) => {
+  onDataFormSubmit = (data: any) => {
     this.dispatch({
       type: 'user/submit',
       payload: data,
@@ -175,7 +178,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     });
   };
 
-  dispatch = (action:any) => {
+  dispatch = (action: any) => {
     const { dispatch } = this.props;
     dispatch(action);
   };
@@ -213,7 +216,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
                   <Radio value="0">全部</Radio>
                   <Radio value="1">正常</Radio>
                   <Radio value="2">停用</Radio>
-                </Radio.Group>
+                </Radio.Group>,
               )}
             </Form.Item>
           </Col>
@@ -234,18 +237,13 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     );
   }
 
-  render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+  render() {
     const {
       loading,
-      user: {
-        data
-      },
+      user: { data },
     } = this.props;
 
-    if(data === undefined){
-      return undefined;
-    }
-    const { list, pagination } = data;
+    const { list, pagination } = data || {};
     const { selectedRows, selectedRowKeys } = this.state;
 
     const columns = [
@@ -260,7 +258,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
       {
         title: '角色名称',
         dataIndex: 'roles',
-        render: (val:any) => {
+        render: (val: any) => {
           if (!val || val.length === 0) {
             return <span>-</span>;
           }
@@ -274,7 +272,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
       {
         title: '用户状态',
         dataIndex: 'status',
-        render: (val:any) => {
+        render: (val: any) => {
           if (val === 1) {
             return <Badge status="success" text="启用" />;
           }
@@ -292,14 +290,14 @@ class UserList extends PureComponent<UserListProps,UserListState> {
       {
         title: '创建时间',
         dataIndex: 'created_at',
-        render: (val:any) => <span>{formatDate(val, 'YYYY-MM-DD HH:mm')}</span>,
+        render: (val: any) => <span>{formatDate(val, 'YYYY-MM-DD HH:mm')}</span>,
       },
     ];
 
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      showTotal: (total:any) => <span>共{total}条</span>,
+      showTotal: (total: any) => <span>共{total}条</span>,
       ...pagination,
     };
 
@@ -360,7 +358,7 @@ class UserList extends PureComponent<UserListProps,UserListState> {
                   onSelect: this.handleTableSelectRow,
                 }}
                 loading={loading}
-                rowKey={(record:any) => record.record_id}
+                rowKey={(record: any) => record.record_id}
                 dataSource={list}
                 columns={columns}
                 pagination={paginationProps}
@@ -375,6 +373,5 @@ class UserList extends PureComponent<UserListProps,UserListState> {
     );
   }
 }
-
 
 export default Form.create<UserListProps>()(UserList);

@@ -1,14 +1,14 @@
-import React, {PureComponent} from 'react';
-import {connect} from 'dva';
-import {Row, Col, Card, Form, Input, Button, Table, Modal} from 'antd';
-import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
-import RoleCard from './RoleCard';
+import { AnyAction, Dispatch } from 'redux';
+import { Button, Card, Col, Form, Input, Modal, Row, Table } from 'antd';
+import { ConnectState, RoleModeState } from '@/models/connect';
+import React, { PureComponent } from 'react';
 
+import { FormComponentProps } from 'antd/es/form';
+import PButton from '@/components/PermButton';
+import PageHeaderLayout from '@/layouts/PageHeaderLayout';
+import { connect } from 'dva';
+import RoleCard from './RoleCard';
 import styles from './RoleList.less';
-import {ConnectState, RoleModeState} from "@/models/connect";
-import {FormComponentProps} from "antd/es/form";
-import {AnyAction, Dispatch} from "redux";
 
 export interface RoleListProps extends FormComponentProps {
   dispatch: Dispatch<AnyAction>;
@@ -17,8 +17,8 @@ export interface RoleListProps extends FormComponentProps {
 }
 
 export interface RoleListState {
-  selectedRowKeys: any,
-  selectedRows: any,
+  selectedRowKeys: any;
+  selectedRows: any;
 }
 
 @connect((state: ConnectState) => ({
@@ -40,15 +40,15 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
   }
 
   clearSelectRows = () => {
-    const {selectedRowKeys} = this.state;
+    const { selectedRowKeys } = this.state;
     if (selectedRowKeys.length === 0) {
       return;
     }
-    this.setState({selectedRowKeys: [], selectedRows: []});
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
   };
 
   dispatch = (action: any) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(action);
   };
 
@@ -81,12 +81,12 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
     });
   };
 
-  handleTableSelectRow = (record:any, selected:any) => {
+  handleTableSelectRow = (record: any, selected: any) => {
     let keys = new Array(0);
     let rows = new Array(0);
-    if(selected){
+    if (selected) {
       keys = [record.record_id];
-      rows = [record]
+      rows = [record];
     }
     this.setState({
       selectedRowKeys: keys,
@@ -106,7 +106,7 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
   };
 
   handleResetFormClick = () => {
-    const {form} = this.props;
+    const { form } = this.props;
     form.resetFields();
 
     this.dispatch({
@@ -121,8 +121,8 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
       e.preventDefault();
     }
 
-    const {form} = this.props;
-    form.validateFields({force: true}, (err, values) => {
+    const { form } = this.props;
+    form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return;
       }
@@ -153,35 +153,35 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
   handleDelOKClick(id: any) {
     this.dispatch({
       type: 'role/del',
-      payload: {record_id: id},
+      payload: { record_id: id },
     });
     this.clearSelectRows();
-  };
+  }
 
   renderDataForm() {
-    return <RoleCard onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit}/>;
-  };
+    return <RoleCard onCancel={this.handleDataFormCancel} onSubmit={this.handleDataFormSubmit} />;
+  }
 
   renderSearchForm() {
     const {
-      form: {getFieldDecorator},
+      form: { getFieldDecorator },
     } = this.props;
 
     return (
       <Form onSubmit={this.handleSearchFormSubmit} layout="inline">
         <Row gutter={16}>
-          <Col md={8} sm={24}>
+          <Col md={8}>
             <Form.Item label="角色名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入"/>)}
+              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
-          <Col md={8} sm={24}>
-            <div style={{overflow: 'hidden'}}>
-              <span style={{marginBottom: 24}}>
+          <Col md={8}>
+            <div style={{ overflow: 'hidden' }}>
+              <span style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button style={{marginLeft: 8}} onClick={this.handleResetFormClick}>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleResetFormClick}>
                   重置
                 </Button>
               </span>
@@ -190,22 +190,16 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
         </Row>
       </Form>
     );
-  };
+  }
 
   render() {
     const {
       loading,
-      role: {
-        data,
-      },
+      role: { data },
     } = this.props;
 
-    if (data === undefined) {
-      return undefined;
-    }
-
-    const {list, pagination} = data;
-    const {selectedRowKeys, selectedRows} = this.state;
+    const { list, pagination } = data || {};
+    const { selectedRowKeys, selectedRows } = this.state;
 
     const columns = [
       {
@@ -231,7 +225,7 @@ class RoleList extends PureComponent<RoleListProps, RoleListState> {
       ...pagination,
     };
 
-    const breadcrumbList = [{title: '系统管理'}, {title: '角色管理', href: '/system/role'}];
+    const breadcrumbList = [{ title: '系统管理' }, { title: '角色管理', href: '/system/role' }];
 
     return (
       <PageHeaderLayout title="角色管理" breadcrumbList={breadcrumbList}>

@@ -1,20 +1,21 @@
-import { message } from 'antd';
 import * as userService from '@/services/user';
-import {Effect} from "dva";
-import {Reducer} from "redux";
+
+import { Effect } from 'dva';
+import { Reducer } from 'redux';
+import { message } from 'antd';
 
 export interface UserModelState {
   search?: any;
   data?: {
-    list: any,
-    pagination: any,
+    list: any;
+    pagination: any;
   };
-  submitting?:boolean;
-  formType?:any;
-  formTitle?:string;
-  formID?:string;
-  formVisible?:boolean;
-  formData?:any;
+  submitting?: boolean;
+  formType?: any;
+  formTitle?: string;
+  formID?: string;
+  formVisible?: boolean;
+  formData?: any;
 }
 
 export interface UserModelType {
@@ -24,9 +25,9 @@ export interface UserModelType {
     fetch: Effect;
     loadForm: Effect;
     fetchForm: Effect;
-    submit:Effect;
-    del:Effect;
-    changeStatus:Effect;
+    submit: Effect;
+    del: Effect;
+    changeStatus: Effect;
   };
   reducers: {
     saveData: Reducer<UserModelState>;
@@ -65,7 +66,7 @@ const UserModel: UserModelType = {
           payload: search,
         });
       } else {
-        const s = yield select((state:any) => state.user.search);
+        const s = yield select((state: any) => state.user.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -78,7 +79,7 @@ const UserModel: UserModelType = {
           payload: pagination,
         });
       } else {
-        const p = yield select((state:any) => state.user.pagination);
+        const p = yield select((state: any) => state.user.pagination);
         if (p) {
           params = { ...params, ...p };
         }
@@ -146,10 +147,10 @@ const UserModel: UserModelType = {
       });
 
       const params = { ...payload };
-      const formType = yield select((state:any) => state.user.formType);
+      const formType = yield select((state: any) => state.user.formType);
       let response;
       if (formType === 'E') {
-        params.record_id = yield select((state:any) => state.user.formID);
+        params.record_id = yield select((state: any) => state.user.formID);
         response = yield call(userService.update, params);
       } else {
         response = yield call(userService.create, params);
@@ -192,7 +193,7 @@ const UserModel: UserModelType = {
           msg = '停用成功';
         }
         message.success(msg);
-        const data = yield select((state:any) => state.user.data);
+        const data = yield select((state: any) => state.user.data);
         const newData = { list: new Array(0), pagination: data.pagination };
 
         for (let i = 0; i < data.list.length; i += 1) {

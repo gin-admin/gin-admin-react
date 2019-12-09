@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {notification} from 'antd';
 import moment from 'moment';
+import { notification } from 'antd';
 import store from './store';
 
 export const baseURL = '/api';
@@ -25,14 +25,14 @@ async function getAccessToken() {
   if (checkAccessTokenExpires(tokenInfo.expires_at) === 0) {
     return axios
       .request({
-        url: `${baseURL}/v1/pub/refresh_token`,
+        url: `${baseURL}/v1/pub/refresh-token`,
         method: 'POST',
         headers: {
           Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
         },
       })
       .then(response => {
-        const {status, data} = response;
+        const { status, data } = response;
         if (status === 200) {
           store.setAccessToken(data);
           return `${data.token_type} ${data.access_token}`;
@@ -64,22 +64,21 @@ export default async function request(url: string, options?: any) {
     defaultHeader['Content-Type'] = 'application/json; charset=utf-8';
     opts.data = opts.body;
   }
-  opts.headers = {...defaultHeader, ...opts.headers};
+  opts.headers = { ...defaultHeader, ...opts.headers };
 
   return axios.request(opts).then(response => {
-    const {status, data} = response;
+    const { status, data } = response;
     if (status >= 200 && status < 300) {
       return data;
     }
 
     if (status === 401) {
       const {
-        error: {code},
+        error: { code },
       } = data;
       if (code === 9999) {
         // @ts-ignore
-        const {g_app} = window;
-        g_app._store.dispatch({type: 'login/logout'});
+        window.g_app._store.dispatch({ type: 'login/logout' }); /* eslint no-underscore-dangle: 0 */
         return {};
       }
     }
@@ -92,7 +91,7 @@ export default async function request(url: string, options?: any) {
       error.message = '未连接到服务器';
     } else if (data) {
       const {
-        error: {message, code},
+        error: { message, code },
       } = data;
       error.message = message;
       error.code = code;
@@ -107,6 +106,6 @@ export default async function request(url: string, options?: any) {
       });
     }
 
-    return {error, status};
+    return { error, status };
   });
 }

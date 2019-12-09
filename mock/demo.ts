@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
+
 export default {
-  'get /test/demo': (req:Request, res:Response) => {
+  'get /test/demo': (req: Request, res: Response) => {
     res.json([
       {
         key: '1',
@@ -24,5 +25,5 @@ export default {
         tags: ['cool', 'teacher'],
       },
     ]);
-  }
+  },
 };

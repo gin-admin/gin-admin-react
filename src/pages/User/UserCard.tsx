@@ -1,27 +1,26 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import { AnyAction, Dispatch } from 'redux';
+import { ConnectState, UserModelState } from '@/models/connect';
 import { Form, Input, Modal, Radio } from 'antd';
-import { md5Hash } from '../../utils/utils';
+import React, { PureComponent } from 'react';
+
+import { FormComponentProps } from 'antd/lib/form';
+import { connect } from 'dva';
 import RoleSelect from './RoleSelect';
-import {ConnectState, UserModelState} from "@/models/connect";
-import {FormComponentProps} from "antd/lib/form";
-import {AnyAction, Dispatch} from "redux";
+import { md5Hash } from '../../utils/utils';
 
-export interface UserCardProps extends FormComponentProps{
-  dispatch?:Dispatch<AnyAction>;
-  onSubmit:any;
-  onCancel:any;
-  user?:UserModelState;
+export interface UserCardProps extends FormComponentProps {
+  dispatch?: Dispatch<AnyAction>;
+  onSubmit: any;
+  onCancel: any;
+  user?: UserModelState;
 }
 
-export interface UserCardState {
+export interface UserCardState {}
 
-}
-
-@connect(({user}:ConnectState) => ({
+@connect(({ user }: ConnectState) => ({
   user,
 }))
-class UserCard extends PureComponent<UserCardProps,UserCardState> {
+class UserCard extends PureComponent<UserCardProps, UserCardState> {
   onOKClick = () => {
     const { form, onSubmit } = this.props;
 
@@ -37,7 +36,7 @@ class UserCard extends PureComponent<UserCardProps,UserCardState> {
     });
   };
 
-  dispatch = (action:any) => {
+  dispatch = (action: any) => {
     const { dispatch } = this.props;
     if (dispatch) {
       dispatch(action);
@@ -51,7 +50,7 @@ class UserCard extends PureComponent<UserCardProps,UserCardState> {
       form: { getFieldDecorator },
     } = this.props;
 
-    if(user === undefined){
+    if (user === undefined) {
       return undefined;
     }
 
@@ -105,7 +104,7 @@ class UserCard extends PureComponent<UserCardProps,UserCardState> {
               <Input
                 type="password"
                 placeholder={formType === 'A' ? '请输入登录密码' : '留空则不修改登录密码'}
-              />
+              />,
             )}
           </Form.Item>
           <Form.Item {...formItemLayout} label="真实姓名">
@@ -137,7 +136,7 @@ class UserCard extends PureComponent<UserCardProps,UserCardState> {
               <Radio.Group>
                 <Radio value="1">正常</Radio>
                 <Radio value="2">停用</Radio>
-              </Radio.Group>
+              </Radio.Group>,
             )}
           </Form.Item>
           <Form.Item {...formItemLayout} label="邮箱">

@@ -1,18 +1,20 @@
+import * as loginService from '@/services/login';
+
+import { parse, stringify } from 'qs';
+
+import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { routerRedux } from 'dva/router';
-import { Effect } from 'dva';
-import { stringify, parse } from 'qs';
-import * as loginService from '@/services/login';
 import store from '@/utils/store';
 
 let isLogout = false;
 
 export interface StateType {
   status?: string;
-  tip?: string,
-  submitting?: boolean,
-  captchaID?: '',
-  captcha?: '',
+  tip?: string;
+  submitting?: boolean;
+  captchaID?: '';
+  captcha?: '';
 }
 
 export interface LoginModelType {
@@ -59,7 +61,9 @@ const Model: LoginModelType = {
       });
     },
     *reloadCaptcha(_, { put, select }) {
-      const captchaID = yield select((state: { login: { captchaID: any; }; }) => state.login.captchaID);
+      const captchaID = yield select(
+        (state: { login: { captchaID: any } }) => state.login.captchaID,
+      );
       yield put({
         type: 'saveCaptcha',
         payload: `${loginService.captcha(captchaID)}&reload=${Math.random()}`,
@@ -123,7 +127,7 @@ const Model: LoginModelType = {
             search: stringify({
               redirect: window.location.href,
             }),
-          })
+          }),
         );
       }
       store.clearAccessToken();

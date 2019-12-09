@@ -1,37 +1,40 @@
-import React, {PureComponent} from 'react';
-import {connect} from 'dva';
-import {Row, Col, Card, Form, Input, Button, Table, Radio, Modal, Layout, Tree} from 'antd';
-import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
-import MenuCard from './MenuCard';
+import { AnyAction, Dispatch } from 'redux';
+import { Button, Card, Col, Form, Input, Layout, Modal, Radio, Row, Table, Tree } from 'antd';
+import React, { PureComponent } from 'react';
 
+import { ConnectState } from '@/models/connect';
+import { FormComponentProps } from 'antd/lib/form';
+import { connect } from 'dva';
+import MenuCard from './MenuCard';
+import { MenuModelState } from '@/models/menu';
+import PButton from '@/components/PermButton';
+import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import styles from './MenuList.less';
-import {FormComponentProps} from "antd/lib/form";
-import {AnyAction, Dispatch} from "redux";
-import {MenuModelState} from "@/models/menu";
-import {ConnectState} from "@/models/connect";
 
 export interface MenuListProps extends FormComponentProps {
-  dispatch: Dispatch<AnyAction>,
-  loading: any,
-  menu: MenuModelState
+  dispatch: Dispatch<AnyAction>;
+  loading: any;
+  menu: MenuModelState;
 }
 
 export interface MenuListState {
-  selectedRowKeys: Array<any>,
-  selectedRows: Array<any>,
-  treeSelectedKeys: Array<any>
+  selectedRowKeys: Array<any>;
+  selectedRows: Array<any>;
+  treeSelectedKeys: Array<any>;
 }
 
-@connect(({menu}: ConnectState) => ({
+@connect(({ menu }: ConnectState) => ({
   menu,
 }))
 class MenuList extends PureComponent<MenuListProps, MenuListState> {
-  state = {
-    selectedRowKeys: [],
-    selectedRows: [],
-    treeSelectedKeys: [],
-  };
+  constructor(props: MenuListProps) {
+    super(props);
+    this.state = {
+      selectedRowKeys: [],
+      selectedRows: [],
+      treeSelectedKeys: [],
+    };
+  }
 
   componentDidMount() {
     this.dispatch({
@@ -46,17 +49,17 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
   }
 
   handleEditClick = () => {
-    const {selectedRows} = this.state;
+    const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
     }
 
-    const {record_id} = selectedRows[0];
+    const { record_id: recordID } = selectedRows[0];
     this.dispatch({
       type: 'menu/loadForm',
       payload: {
         type: 'E',
-        id: record_id,
+        id: recordID,
       },
     });
   };
@@ -71,33 +74,33 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
   };
 
   handleDelClick = () => {
-    const {selectedRows} = this.state;
+    const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
     }
-    const {item:{name,record_id}} = selectedRows[0];
+
+    const { name, record_id: recordID } = selectedRows[0];
     Modal.confirm({
       title: `确定删除【菜单数据：${name}】？`,
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
-      onOk: this.handleDelOKClick.bind(this, record_id),
+      onOk: this.handleDelOKClick.bind(this, recordID),
     });
   };
 
-  handleTableSelectRow = (record:any, selected:any) => {
+  handleTableSelectRow = (record: any, selected: any) => {
     let keys = new Array(0);
     let rows = new Array(0);
-    if(selected){
+    if (selected) {
       keys = [record.record_id];
-      rows = [record]
+      rows = [record];
     }
     this.setState({
       selectedRowKeys: keys,
       selectedRows: rows,
     });
   };
-
 
   onTableChange = (pagination: any) => {
     this.dispatch({
@@ -111,11 +114,11 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
   };
 
   onResetFormClick = () => {
-    const {form} = this.props;
+    const { form } = this.props;
     form.resetFields();
     this.dispatch({
       type: 'menu/fetch',
-      search: {parent_id: this.getParentID()},
+      search: { parent_id: this.getParentID() },
       pagination: {},
     });
   };
@@ -125,7 +128,7 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
       e.preventDefault();
     }
 
-    const {form} = this.props;
+    const { form } = this.props;
     form.validateFields((err, values) => {
       if (err) {
         return;
@@ -158,20 +161,20 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
   };
 
   clearSelectRows = () => {
-    const {selectedRowKeys} = this.state;
+    const { selectedRowKeys } = this.state;
     if (selectedRowKeys.length === 0) {
       return;
     }
-    this.setState({selectedRowKeys: [], selectedRows: []});
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
   };
 
   dispatch = (action: any) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(action);
   };
 
   getParentID = () => {
-    const {treeSelectedKeys} = this.state;
+    const { treeSelectedKeys } = this.state;
     let parentID = '';
     if (treeSelectedKeys.length > 0) {
       [parentID] = treeSelectedKeys;
@@ -182,13 +185,13 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
   handleDelOKClick(id: any) {
     this.dispatch({
       type: 'menu/del',
-      payload: {record_id: id},
+      payload: { record_id: id },
     });
     this.clearSelectRows();
   }
 
   renderDataForm() {
-    return <MenuCard onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit}/>;
+    return <MenuCard onCancel={this.handleFormCancel} onSubmit={this.handleFormSubmit} />;
   }
 
   renderTreeNodes = (data: any) =>
@@ -200,22 +203,22 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
           </Tree.TreeNode>
         );
       }
-      return <Tree.TreeNode title={item.name} key={item.record_id} dataRef={item}/>;
+      return <Tree.TreeNode title={item.name} key={item.record_id} dataRef={item} />;
     });
 
   renderSearchForm() {
     const {
-      form: {getFieldDecorator},
+      form: { getFieldDecorator },
     } = this.props;
     return (
       <Form onSubmit={this.onSearchFormSubmit} layout="inline">
         <Row gutter={8}>
           <Col span={8}>
             <Form.Item label="菜单名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入"/>)}
+              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
-          <Col span={10}>
+          <Col span={8}>
             <Form.Item label="隐藏状态">
               {getFieldDecorator('hidden', {
                 initialValue: '-1',
@@ -224,17 +227,17 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
                   <Radio value="-1">全部</Radio>
                   <Radio value="0">显示</Radio>
                   <Radio value="1">隐藏</Radio>
-                </Radio.Group>
+                </Radio.Group>,
               )}
             </Form.Item>
           </Col>
-          <Col span={6}>
-            <div style={{overflow: 'hidden'}}>
-              <span style={{marginBottom: 24}}>
+          <Col span={8}>
+            <div style={{ overflow: 'hidden' }}>
+              <span style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button style={{marginLeft: 8}} onClick={this.onResetFormClick}>
+                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
                   重置
                 </Button>
               </span>
@@ -248,19 +251,11 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
   render() {
     const {
       loading,
-      menu: {
-        data,
-        treeData,
-        expandedKeys,
-      },
+      menu: { data, treeData, expandedKeys },
     } = this.props;
 
-    if (data === undefined) {
-      return undefined;
-    }
-    const {list, pagination} = data;
-
-    const {selectedRowKeys} = this.state;
+    const { list, pagination } = data || {};
+    const { selectedRowKeys } = this.state;
 
     const columns = [
       {
@@ -302,14 +297,14 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
       ...pagination,
     };
 
-    const breadcrumbList = [{title: '系统管理'}, {title: '菜单管理', href: '/system/menu'}];
+    const breadcrumbList = [{ title: '系统管理' }, { title: '菜单管理', href: '/system/menu' }];
 
     return (
       <PageHeaderLayout title="菜单管理" breadcrumbList={breadcrumbList}>
         <Layout>
           <Layout.Sider
             width={200}
-            style={{background: '#fff', borderRight: '1px solid lightGray'}}
+            style={{ background: '#fff', borderRight: '1px solid lightGray' }}
           >
             <Tree
               expandedKeys={expandedKeys}
@@ -319,7 +314,7 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
                 });
 
                 const {
-                  menu: {search},
+                  menu: { search },
                 } = this.props;
 
                 const item = {
@@ -332,7 +327,7 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
 
                 this.dispatch({
                   type: 'menu/fetch',
-                  search: {...search, ...item},
+                  search: { ...search, ...item },
                   pagination: {},
                 });
               }}
@@ -351,21 +346,11 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
               <div className={styles.tableList}>
                 <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
                 <div className={styles.tableListOperator}>
-                  <PButton
-                    code="add"
-                    icon="plus"
-                    type="primary"
-                    onClick={() => this.handleAddClick()}
-                  >
+                  <PButton code="add" icon="plus" type="primary" onClick={this.handleAddClick}>
                     新建
                   </PButton>
                   {selectedRowKeys.length === 1 && [
-                    <PButton
-                      key="edit"
-                      code="edit"
-                      icon="edit"
-                      onClick={() => this.handleEditClick()}
-                    >
+                    <PButton key="edit" code="edit" icon="edit" onClick={this.handleEditClick}>
                       编辑
                     </PButton>,
                     <PButton
@@ -373,7 +358,7 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
                       code="del"
                       icon="delete"
                       type="danger"
-                      onClick={() => this.handleDelClick()}
+                      onClick={this.handleDelClick}
                     >
                       删除
                     </PButton>,

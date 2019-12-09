@@ -1,8 +1,8 @@
-import React from "react";
-import {Icon} from 'antd';
+import { Icon } from 'antd';
+import React from 'react';
 
-export default ({title}: any) => (
+export default ({ title }: any) => (
   <div>
-    Copyright <Icon type="copyright"/> {title}
+    Copyright <Icon type="copyright" /> {title}
   </div>
 );

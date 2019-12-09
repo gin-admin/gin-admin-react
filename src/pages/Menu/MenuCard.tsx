@@ -1,59 +1,54 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import { AnyAction, Dispatch } from 'redux';
 import {
-  Form,
-  Input,
   Card,
-  Radio,
-  Modal,
-  Icon,
-  TreeSelect,
-  Tooltip,
-  InputNumber,
-  Row,
   Col,
+  Form,
+  Icon,
+  Input,
+  InputNumber,
+  Modal,
+  Radio,
+  Row,
+  Tooltip,
+  TreeSelect,
 } from 'antd';
+import React, { PureComponent } from 'react';
 
+import { ConnectState } from '@/models/connect';
+import { FormComponentProps } from 'antd/lib/form';
+import { connect } from 'dva';
 import MenuAction from './MenuAction';
 import MenuResource from './MenuResource';
-import {ConnectState} from "@/models/connect";
-import {FormComponentProps} from "antd/lib/form";
-import {AnyAction, Dispatch} from "redux";
 
 export interface MenuCardProps extends FormComponentProps {
-  onSubmit?:any;
+  onSubmit?: any;
   dispatch?: Dispatch<AnyAction>;
-  onCancel?:any;
-  menu?:any;
+  onCancel?: any;
+  menu?: any;
 }
 
-@connect(({menu}: ConnectState)=>({
+@connect(({ menu }: ConnectState) => ({
   menu,
 }))
-class MenuCard extends PureComponent<MenuCardProps>{
-  onOKClick = () =>{
+class MenuCard extends PureComponent<MenuCardProps> {
+  onOKClick = () => {
     const { form, onSubmit } = this.props;
-    form.validateFieldsAndScroll((err:any,values:any)=>{
-      if (!err){
+    form.validateFieldsAndScroll((err: any, values: any) => {
+      if (!err) {
         const formData = { ...values };
         formData.hidden = parseInt(formData.hidden, 10);
         formData.sequence = parseInt(formData.sequence, 10);
         onSubmit(formData);
       }
-    })
+    });
   };
 
-  // dispatch = (action:any) => {
-  //   const { dispatch } = this.props;
-  //   dispatch(action);
-  // };
-
-  toTreeSelect = (data:any)=>{
-    if(!data){
+  toTreeSelect = (data: any) => {
+    if (!data) {
       return [];
     }
     const newData = [];
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i += 1) {
       const item = { ...data[i], title: data[i].name, value: data[i].record_id };
       if (item.children && item.children.length > 0) {
         item.children = this.toTreeSelect(item.children);
@@ -120,7 +115,7 @@ class MenuCard extends PureComponent<MenuCardProps>{
                       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                       treeData={this.toTreeSelect(treeData)}
                       placeholder="请选择"
-                    />
+                    />,
                   )}
                 </Form.Item>
               </Col>
@@ -178,14 +173,14 @@ class MenuCard extends PureComponent<MenuCardProps>{
                     <Radio.Group>
                       <Radio value="0">显示</Radio>
                       <Radio value="1">隐藏</Radio>
-                    </Radio.Group>
+                    </Radio.Group>,
                   )}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={24}>
-                <Card title="菜单动作管理" bordered={false}>
+                <Card title="动作管理" bordered={false}>
                   {getFieldDecorator('actions', {
                     initialValue: formData.actions,
                   })(<MenuAction />)}
@@ -194,7 +189,7 @@ class MenuCard extends PureComponent<MenuCardProps>{
             </Row>
             <Row>
               <Col span={24}>
-                <Card title="菜单资源管理" bordered={false}>
+                <Card title="资源管理(服务端路由)" bordered={false}>
                   {getFieldDecorator('resources', {
                     initialValue: formData.resources,
                   })(<MenuResource />)}

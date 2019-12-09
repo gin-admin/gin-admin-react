@@ -1,22 +1,28 @@
-import React, {PureComponent} from 'react';
-
 import * as menuService from '@/services/menu';
-import EditableCell from "@/pages/Role/RoleMenu/EditableCell";
-import {Table} from "antd";
+
+import React, { PureComponent } from 'react';
+
+import EditableCell from '@/pages/Role/RoleMenu/EditableCell';
+import { Table } from 'antd';
 
 export interface RoleMenuProps {
-  value?:any,
-  onChange?:any,
+  value?: any;
+  onChange?: any;
 }
 
 export interface RoleMenuState {
-  dataSource:any,
-  menuData:any,
+  dataSource: any;
+  menuData: any;
 }
 
-export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState> {
-  private columns: ({ dataIndex: string; width: string; title: string } | { dataIndex: string; editable: boolean; width: string; title: string } | { dataIndex: string; editable: boolean; width: string; title: string })[];
-  constructor(props:RoleMenuProps) {
+export default class RoleMenu extends PureComponent<RoleMenuProps, RoleMenuState> {
+  private columns: (
+    | { dataIndex: string; width: string; title: string }
+    | { dataIndex: string; editable: boolean; width: string; title: string }
+    | { dataIndex: string; editable: boolean; width: string; title: string }
+  )[];
+
+  constructor(props: RoleMenuProps) {
     super(props);
 
     this.columns = [
@@ -43,16 +49,16 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
       menuData: [],
       dataSource: props.value || [],
     };
-  };
+  }
 
   componentDidMount(): void {
-    menuService.queryTree({includeActions: '1', includeResources: '1'}).then((data:any)=>{
+    menuService.queryTree({ includeActions: '1', includeResources: '1' }).then((data: any) => {
       const list = data.list || [];
       this.setState({ menuData: this.fillData(list) });
     });
   }
 
-  static getDerivedStateFromProps(nextProps: { value: any; }, state: any) {
+  static getDerivedStateFromProps(nextProps: { value: any }, state: any) {
     if ('value' in nextProps) {
       return {
         ...state,
@@ -62,7 +68,7 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     return state;
   }
 
-  fillData = (data:any) => {
+  fillData = (data: any) => {
     const newData = [...data];
     for (let i = 0; i < newData.length; i += 1) {
       const { children } = newData[i];
@@ -75,7 +81,7 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     return newData;
   };
 
-  handleSave = (record:any, dataIndex:any, values:any) => {
+  handleSave = (record: any, dataIndex: any, values: any) => {
     const { dataSource } = this.state;
     const data = [...dataSource];
     const index = data.findIndex(item => item.menu_id === record.record_id);
@@ -96,14 +102,14 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     });
   };
 
-  triggerChange = (data:any) => {
+  triggerChange = (data: any) => {
     const { onChange } = this.props;
     if (onChange) {
       onChange(data);
     }
   };
 
-  expandAllChild = (data:any):any => {
+  expandAllChild = (data: any): any => {
     let child = [];
     for (let i = 0; i < data.length; i += 1) {
       child.push(data[i]);
@@ -114,7 +120,7 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     return child;
   };
 
-  checkAndAdd = (data:any, addData:any):any => {
+  checkAndAdd = (data: any, addData: any): any => {
     const list = [...data];
 
     for (let i = 0; i < addData.length; i += 1) {
@@ -129,8 +135,8 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
       if (!exists) {
         const item = {
           menu_id: addData[i].record_id,
-          actions: addData[i].actions ? addData[i].actions.map((v:any) => v.code) : [],
-          resources: addData[i].resources ? addData[i].resources.map((v:any) => v.code) : [],
+          actions: addData[i].actions ? addData[i].actions.map((v: any) => v.code) : [],
+          resources: addData[i].resources ? addData[i].resources.map((v: any) => v.code) : [],
         };
         list.push(item);
       }
@@ -139,7 +145,7 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     return list;
   };
 
-  cancelSelected = (data:any, selectedRows:any) => {
+  cancelSelected = (data: any, selectedRows: any) => {
     const list = [];
     for (let i = 0; i < data.length; i += 1) {
       let exists = false;
@@ -156,7 +162,7 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     return list;
   };
 
-  handleSelectedRow = (record:any, selected:any) => {
+  handleSelectedRow = (record: any, selected: any) => {
     let selectedRows = [record];
     if (record.children) {
       selectedRows = [...selectedRows, ...this.expandAllChild(record.children)];
@@ -175,30 +181,37 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     });
   };
 
-  handleSelectAll = (selected:any, selectRows:any) => {
+  handleSelectAll = (selected: any, selectRows: any) => {
     let list: never[] = [];
     if (selected) {
-      list = selectRows.map((vv:any) => {
-        return {
-          menu_id: vv.record_id,
-          actions: vv.actions ? vv.actions.map((v:any) => v.code) : [],
-          resources: vv.resources ? vv.resources.map((v:any) => v.code) : [],
-        };
-      });
+      list = selectRows.map((vv: any) => ({
+        menu_id: vv.record_id,
+        actions: vv.actions ? vv.actions.map((v: any) => v.code) : [],
+        resources: vv.resources ? vv.resources.map((v: any) => v.code) : [],
+      }));
     }
     this.setState({ dataSource: list }, () => {
       this.triggerChange(list);
     });
   };
 
-  render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+  render():
+    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+    | string
+    | number
+    | {}
+    | React.ReactNodeArray
+    | React.ReactPortal
+    | boolean
+    | null
+    | undefined {
     const { dataSource, menuData } = this.state;
     const components = {
       body: {
         cell: EditableCell,
       },
     };
-    const columns = this.columns.map((col:any) => {
+    const columns = this.columns.map((col: any) => {
       if (!col.editable) {
         return col;
       }
@@ -219,7 +232,7 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
           bordered
           defaultExpandAllRows
           rowSelection={{
-            selectedRowKeys: dataSource.map((v:any) => v.menu_id),
+            selectedRowKeys: dataSource.map((v: any) => v.menu_id),
             onSelect: this.handleSelectedRow,
             onSelectAll: this.handleSelectAll,
           }}
@@ -233,4 +246,3 @@ export default class RoleMenu extends PureComponent<RoleMenuProps,RoleMenuState>
     );
   }
 }
-

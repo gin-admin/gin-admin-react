@@ -1,27 +1,25 @@
+import { AnyAction, Dispatch } from 'redux';
+import { Card, Col, Form, Input, InputNumber, Modal, Row, message } from 'antd';
 import React, { PureComponent } from 'react';
+
+import { ConnectState } from '@/models/connect';
+import { FormComponentProps } from 'antd/es/form';
 import { connect } from 'dva';
-import { Form, Input, Modal, message, Card, Row, Col, InputNumber } from 'antd';
-
 import RoleMenu from './RoleMenu';
-import {FormComponentProps} from "antd/es/form";
-import {ConnectState} from "@/models/connect";
-import {AnyAction, Dispatch} from "redux";
 
-export interface RoleCardProps extends FormComponentProps{
-  onSubmit?:any;
-  onCancel?:any;
+export interface RoleCardProps extends FormComponentProps {
+  onSubmit?: any;
+  onCancel?: any;
   dispatch?: Dispatch<AnyAction>;
-  role?:any;
+  role?: any;
 }
 
-export interface RoleCardState {
+export interface RoleCardState {}
 
-}
-
-@connect(({role}:ConnectState) => ({
+@connect(({ role }: ConnectState) => ({
   role,
 }))
-class RoleCard extends PureComponent<RoleCardProps,RoleCardState> {
+class RoleCard extends PureComponent<RoleCardProps, RoleCardState> {
   onOKClick = () => {
     const { form, onSubmit } = this.props;
 
@@ -39,14 +37,14 @@ class RoleCard extends PureComponent<RoleCardProps,RoleCardState> {
     });
   };
 
-  dispatch = (action:any) => {
+  dispatch = (action: any) => {
     const { dispatch } = this.props;
     if (dispatch) {
       dispatch(action);
     }
   };
 
-  render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+  render() {
     const {
       role: { formTitle, formVisible, formData, submitting },
       form: { getFieldDecorator },
@@ -65,7 +63,7 @@ class RoleCard extends PureComponent<RoleCardProps,RoleCardState> {
     return (
       <Modal
         title={formTitle}
-        width={800}
+        width={1000}
         visible={formVisible}
         maskClosable={false}
         confirmLoading={submitting}

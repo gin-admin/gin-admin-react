@@ -1,15 +1,15 @@
-import { message } from 'antd';
 import * as roleService from '@/services/role';
-import {Effect} from "dva";
-import {Reducer} from "redux";
 
+import { Effect } from 'dva';
+import { Reducer } from 'redux';
+import { message } from 'antd';
 
 export interface RoleModeState {
   search?: any;
   pagination?: any;
   data?: {
-    list?: any,
-    pagination?: any,
+    list?: any;
+    pagination?: any;
   };
   submitting?: boolean;
   formTitle?: string;
@@ -22,14 +22,14 @@ export interface RoleModeState {
 
 export interface RoleModeType {
   namespace: string;
-  state:RoleModeState;
+  state: RoleModeState;
   effects: {
     fetch: Effect;
     loadForm: Effect;
     fetchForm: Effect;
     submit: Effect;
-    del:Effect;
-    fetchSelect:Effect;
+    del: Effect;
+    fetchSelect: Effect;
   };
   reducers: {
     saveData: Reducer<RoleModeState>;
@@ -45,7 +45,7 @@ export interface RoleModeType {
   };
 }
 
-const Role:RoleModeType = {
+const Role: RoleModeType = {
   namespace: 'role',
   state: {
     search: {},
@@ -72,7 +72,7 @@ const Role:RoleModeType = {
           payload: search,
         });
       } else {
-        const s = yield select((state:any) => state.role.search);
+        const s = yield select((state: any) => state.role.search);
         if (s) {
           params = { ...params, ...s };
         }
@@ -85,7 +85,7 @@ const Role:RoleModeType = {
           payload: pagination,
         });
       } else {
-        const p = yield select((state:any) => state.role.pagination);
+        const p = yield select((state: any) => state.role.pagination);
         if (p) {
           params = { ...params, ...p };
         }
@@ -155,11 +155,11 @@ const Role:RoleModeType = {
       });
 
       const params = { ...payload };
-      const formType = yield select((state:any) => state.role.formType);
+      const formType = yield select((state: any) => state.role.formType);
 
       let response;
       if (formType === 'E') {
-        params.record_id = yield select((state:any) => state.role.formID);
+        params.record_id = yield select((state: any) => state.role.formID);
         response = yield call(roleService.update, params);
       } else {
         response = yield call(roleService.create, params);
@@ -228,7 +228,7 @@ const Role:RoleModeType = {
     saveSelectData(state, { payload }) {
       return { ...state, selectData: payload };
     },
-  }
+  },
 };
 
 export default Role;

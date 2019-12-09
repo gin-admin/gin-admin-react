@@ -1,32 +1,33 @@
-import React, {PureComponent} from 'react';
-import {Tabs, Skeleton} from 'antd';
+import React, { PureComponent } from 'react';
+import { Skeleton, Tabs } from 'antd';
+
 import classNames from 'classnames';
-import styles from './index.less';
 import BreadcrumbView from './breadcrumb';
+import styles from './index.less';
 
 export interface PageHeaderProps {
-  onTabChange?: any,
-  title?: any,
-  logo?: any,
-  action?: any,
-  content?: any,
-  extraContent?: any,
-  tabList?: any,
-  className?: any,
-  tabActiveKey?: any,
-  tabDefaultActiveKey?: any,
-  tabBarExtraContent?: any,
-  loading?: any,
-  wide?: any,
-  hiddenBreadcrumb?: any,
-  linkElement:any,
+  onTabChange?: any;
+  title?: any;
+  logo?: any;
+  action?: any;
+  content?: any;
+  extraContent?: any;
+  tabList?: any;
+  className?: any;
+  tabActiveKey?: any;
+  tabDefaultActiveKey?: any;
+  tabBarExtraContent?: any;
+  loading?: any;
+  wide?: any;
+  hiddenBreadcrumb?: any;
+  linkElement: any;
 }
 
-const {TabPane} = Tabs;
+const { TabPane } = Tabs;
 
 export default class PageHeader extends PureComponent<PageHeaderProps> {
   onChange = (key: any) => {
-    const {onTabChange} = this.props;
+    const { onTabChange } = this.props;
     if (onTabChange) {
       onTabChange(key);
     }
@@ -50,7 +51,7 @@ export default class PageHeader extends PureComponent<PageHeaderProps> {
     } = this.props;
 
     const clsString = classNames(styles.pageHeader, className);
-    const activeKeyProps = {defaultActiveKey: undefined, activeKey: undefined};
+    const activeKeyProps = { defaultActiveKey: undefined, activeKey: undefined };
     if (tabDefaultActiveKey !== undefined) {
       activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
     }
@@ -64,8 +65,8 @@ export default class PageHeader extends PureComponent<PageHeaderProps> {
             loading={loading}
             title={false}
             active
-            paragraph={{rows: 3}}
-            avatar={{size: "large", shape: "circle"}}
+            paragraph={{ rows: 3 }}
+            avatar={{ size: 'large', shape: 'circle' }}
           >
             {hiddenBreadcrumb ? null : <BreadcrumbView {...this.props} />}
             <div className={styles.detail}>
@@ -89,7 +90,7 @@ export default class PageHeader extends PureComponent<PageHeaderProps> {
                 tabBarExtraContent={tabBarExtraContent}
               >
                 {tabList.map((item: any) => (
-                  <TabPane tab={item.tab} key={item.key}/>
+                  <TabPane tab={item.tab} key={item.key} />
                 ))}
               </Tabs>
             ) : null}
