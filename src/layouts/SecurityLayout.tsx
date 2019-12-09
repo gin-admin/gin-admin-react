@@ -5,6 +5,7 @@ import { ConnectState } from '@/models/connect';
 import { ContainerQuery } from 'react-container-query';
 import CopyRight from '@/components/CopyRight';
 import DocumentTitle from 'react-document-title';
+import { Debounce } from 'lodash-decorators/debounce';
 import { GlobalContext } from '@/utils/context';
 import GlobalFooter from '@/components/GlobalFooter';
 import { GlobalModelState } from '@/models/global';
@@ -67,6 +68,14 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps> {
       type: 'global/fetchMenuTree',
       pathname,
     });
+  }
+
+  @Debounce(600)
+  onTriggerResizeEvent() {
+    /* eslint class-methods-use-this: 0 */
+    const event = document.createEvent('HTMLEvents');
+    event.initEvent('resize', true, false);
+    window.dispatchEvent(event);
   }
 
   dispatch = (action: any) => {
@@ -285,7 +294,7 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps> {
           </Menu>
         </Sider>
         <Layout>
-          <Header className={styles.header}>
+          <Header className={styles.header} style={{ padding: 0, paddingRight: 30 }}>
             <Icon
               className={styles.trigger}
               type={collapsed ? 'menu-unfold' : 'menu-fold'}

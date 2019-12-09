@@ -32,7 +32,6 @@ describe('Ant Design Pro E2E test', () => {
   };
 
   const routers = formatter(RouterConfig);
-  console.log('routers', routers);
   routers.forEach(route => {
     it(`test pages ${route}`, testPage(route));
   });

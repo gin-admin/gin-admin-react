@@ -1,11 +1,9 @@
 import { IConfig, IPlugin } from 'umi-types';
-
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
+
 import slash from 'slash2';
 import webpackPlugin from './plugin.config';
-
 const { pwa, primaryColor } = defaultSettings;
-
 const plugins: IPlugin[] = [
   [
     'umi-plugin-react',
@@ -14,19 +12,12 @@ const plugins: IPlugin[] = [
       dva: {
         hmr: true,
       },
-      locale: {
-        // default false
-        enable: true,
-        // default zh-CN
-        default: 'zh-CN',
-        // default true, when it is true, will use `navigator.language` overwrite default
-        baseNavigator: true,
+      locale: true,
+      dynamicImport: {
+        loadingComponent: './components/PageLoading/index',
+        webpackChunkName: true,
+        level: 3,
       },
-      // dynamicImport: {
-      //   loadingComponent: './components/PageLoading/index',
-      //   webpackChunkName: true,
-      //   level: 3,
-      // },
       pwa: pwa
         ? {
             workboxPluginMode: 'InjectManifest',
@@ -41,6 +32,7 @@ const plugins: IPlugin[] = [
       //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
       //   exclude: ['@babel/runtime', 'netlify-lambda'],
       // },
+      dll: true,
     },
   ],
   [
@@ -53,7 +45,6 @@ const plugins: IPlugin[] = [
     },
   ],
 ];
-
 export default {
   plugins,
   block: {
@@ -82,14 +73,29 @@ export default {
       path: '/',
       component: '../layouts/SecurityLayout',
       routes: [
-        { path: '/', redirect: '/dashboard' },
-        { path: '/dashboard', component: './Dashboard/Home' },
+        {
+          path: '/',
+          redirect: '/dashboard',
+        },
+        {
+          path: '/dashboard',
+          component: './Dashboard/Home',
+        },
         {
           path: '/system',
           routes: [
-            { path: '/system/menu', component: './Menu/MenuList' },
-            { path: '/system/role', component: './Role/RoleList' },
-            { path: '/system/user', component: './User/UserList' },
+            {
+              path: '/system/menu',
+              component: './Menu/MenuList',
+            },
+            {
+              path: '/system/role',
+              component: './Role/RoleList',
+            },
+            {
+              path: '/system/user',
+              component: './User/UserList',
+            },
           ],
         },
         {
