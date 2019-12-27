@@ -1,11 +1,11 @@
 import { AnyAction, Dispatch } from 'redux';
 import { Badge, Button, Card, Col, Form, Input, Modal, Radio, Row, Table } from 'antd';
-import { ConnectState, UserModelState } from '@/models/connect';
 import React, { PureComponent } from 'react';
 
 import { FormComponentProps } from 'antd/lib/form';
-import PButton from '@/components/PermButton';
 import { connect } from 'dva';
+import PButton from '@/components/PermButton';
+import { ConnectState, UserModelState } from '@/models/connect';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import RoleSelect from './RoleSelect';
 import UserCard from './UserCard';
@@ -147,16 +147,14 @@ class UserList extends PureComponent<UserListProps, UserListState> {
         return;
       }
 
-      let roleIDs = '';
-      if (values.role_ids) {
-        roleIDs = values.role_ids.map((v: any) => v.role_id).join(',');
+      const search = { ...values };
+      if (search.roleIDs) {
+        search.roleIDs = search.roleIDs.map((v: any) => v.role_id).join(',');
       }
+
       this.dispatch({
         type: 'user/fetch',
-        search: {
-          ...values,
-          role_ids: roleIDs,
-        },
+        search,
         pagination: {},
       });
       this.clearSelectRows();
@@ -196,16 +194,16 @@ class UserList extends PureComponent<UserListProps, UserListState> {
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item label="用户名">
-              {getFieldDecorator('user_name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('userName')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="真实姓名">
-              {getFieldDecorator('real_name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('realName')(<Input placeholder="请输入" />)}
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="所属角色">{getFieldDecorator('role_ids')(<RoleSelect />)}</Form.Item>
+            <Form.Item label="所属角色">{getFieldDecorator('roleIDs')(<RoleSelect />)}</Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>

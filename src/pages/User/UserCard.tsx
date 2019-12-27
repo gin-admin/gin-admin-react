@@ -1,10 +1,10 @@
 import { AnyAction, Dispatch } from 'redux';
-import { ConnectState, UserModelState } from '@/models/connect';
 import { Form, Input, Modal, Radio } from 'antd';
 import React, { PureComponent } from 'react';
 
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
+import { ConnectState, UserModelState } from '@/models/connect';
 import RoleSelect from './RoleSelect';
 import { md5Hash } from '../../utils/utils';
 

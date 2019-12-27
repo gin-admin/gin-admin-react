@@ -56,16 +56,7 @@ export default class RoleSelect extends PureComponent<RoleSelectProps, RoleSelec
     }
   };
 
-  render():
-    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-    | string
-    | number
-    | {}
-    | React.ReactNodeArray
-    | React.ReactPortal
-    | boolean
-    | null
-    | undefined {
+  render() {
     const { value, data } = this.state;
 
     return (

@@ -1,12 +1,12 @@
 import { AnyAction, Dispatch } from 'redux';
 import { Button, Card, Col, Form, Input, Modal, Row, Table } from 'antd';
-import { ConnectState, RoleModeState } from '@/models/connect';
 import React, { PureComponent } from 'react';
-
 import { FormComponentProps } from 'antd/es/form';
+import { connect } from 'dva';
+import { ConnectState, RoleModeState } from '@/models/connect';
+
 import PButton from '@/components/PermButton';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import { connect } from 'dva';
 import RoleCard from './RoleCard';
 import styles from './RoleList.less';
 

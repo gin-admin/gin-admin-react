@@ -2,9 +2,9 @@ import { AnyAction, Dispatch } from 'redux';
 import { Card, Col, Form, Input, InputNumber, Modal, Row, message } from 'antd';
 import React, { PureComponent } from 'react';
 
-import { ConnectState } from '@/models/connect';
 import { FormComponentProps } from 'antd/es/form';
 import { connect } from 'dva';
+import { ConnectState } from '@/models/connect';
 import RoleMenu from './RoleMenu';
 
 export interface RoleCardProps extends FormComponentProps {

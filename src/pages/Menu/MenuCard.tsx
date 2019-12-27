@@ -14,9 +14,9 @@ import {
 } from 'antd';
 import React, { PureComponent } from 'react';
 
-import { ConnectState } from '@/models/connect';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
+import { ConnectState } from '@/models/connect';
 import MenuAction from './MenuAction';
 import MenuResource from './MenuResource';
 

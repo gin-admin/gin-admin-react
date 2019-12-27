@@ -2,9 +2,9 @@ import { AnyAction, Dispatch } from 'redux';
 import { Button, Card, Col, Form, Input, Layout, Modal, Radio, Row, Table, Tree } from 'antd';
 import React, { PureComponent } from 'react';
 
-import { ConnectState } from '@/models/connect';
 import { FormComponentProps } from 'antd/lib/form';
 import { connect } from 'dva';
+import { ConnectState } from '@/models/connect';
 import MenuCard from './MenuCard';
 import { MenuModelState } from '@/models/menu';
 import PButton from '@/components/PermButton';
@@ -303,8 +303,13 @@ class MenuList extends PureComponent<MenuListProps, MenuListState> {
       <PageHeaderLayout title="菜单管理" breadcrumbList={breadcrumbList}>
         <Layout>
           <Layout.Sider
-            width={200}
-            style={{ background: '#fff', borderRight: '1px solid lightGray' }}
+            width={220}
+            style={{
+              background: '#fff',
+              borderRight: '1px solid lightGray',
+              paddingLeft: 10,
+              paddingRight: 10,
+            }}
           >
             <Tree
               expandedKeys={expandedKeys}
