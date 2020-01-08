@@ -153,7 +153,7 @@ export default {
   chainWebpack: webpackPlugin,
   proxy: {
     '/api/': {
-      target: 'http://localhost:10088/',
+      target: 'http://47.105.189.180:8080/',
       changeOrigin: true,
     },
   },
