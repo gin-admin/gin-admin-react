@@ -1,13 +1,15 @@
 @import '~antd/lib/style/themes/default.less';
 
 .container {
-  position: relative;
+  background: #f0f2f5;
+  background-image: url('/background/login.svg');
   width: 100%;
   min-height: 100%;
-  padding: 110px 0 144px 0;
-  background: #f0f2f5 url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg')
-    no-repeat center;
+  background-repeat: no-repeat;
+  background-position: center;
   background-size: 100%;
+  padding: 110px 0 144px 0;
+  position: relative;
 }
 
 .top {
@@ -24,26 +26,26 @@
 
 .logo {
   height: 44px;
-  margin-right: 12px;
   vertical-align: top;
+  margin-right: 12px;
 }
 
 .title {
-  position: relative;
+  font-size: 33px;
   color: @heading-color;
   font-weight: 600;
-  font-size: 33px;
+  position: relative;
 }
 
 .desc {
+  font-size: @font-size-base;
+  color: @text-color-secondary;
   margin-top: 12px;
   margin-bottom: 40px;
-  color: @text-color-secondary;
-  font-size: @font-size-base;
 }
 
 .footer {
   position: absolute;
-  bottom: 0;
   width: 100%;
+  bottom: 0;
 }
