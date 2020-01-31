@@ -176,7 +176,7 @@ class MenuCard extends PureComponent {
             </Row>
             <Row>
               <Col span={24}>
-                <Card title="菜单动作管理" bordered={false}>
+                <Card title="动作管理" bordered={false}>
                   {getFieldDecorator('actions', {
                     initialValue: formData.actions,
                   })(<MenuAction />)}
@@ -185,7 +185,7 @@ class MenuCard extends PureComponent {
             </Row>
             <Row>
               <Col span={24}>
-                <Card title="菜单资源管理" bordered={false}>
+                <Card title="资源管理(服务端路由)" bordered={false}>
                   {getFieldDecorator('resources', {
                     initialValue: formData.resources,
                   })(<MenuResource />)}
