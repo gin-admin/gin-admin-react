@@ -1,5 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Modal, Form, Input, Row, Col, Tooltip, Icon } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Modal, Input, Row, Col, Tooltip } from 'antd';
 
 @Form.create()
 class AddDialog extends PureComponent {
@@ -63,7 +66,7 @@ class AddDialog extends PureComponent {
               </Col>
               <Col span={4} style={{ textAlign: 'center' }}>
                 <Tooltip title="例：用户数据">
-                  <Icon type="question-circle" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </Col>
             </Row>
@@ -82,7 +85,7 @@ class AddDialog extends PureComponent {
               </Col>
               <Col span={4} style={{ textAlign: 'center' }}>
                 <Tooltip title="例：/api/v1/users">
-                  <Icon type="question-circle" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </Col>
             </Row>

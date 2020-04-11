@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'umi/link';
+import { Link } from 'umi';
 import PageHeader from '@/components/PageHeader';
 import styles from './PageHeaderLayout.less';
 

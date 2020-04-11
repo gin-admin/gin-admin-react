@@ -1,18 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Form,
-  Input,
-  Card,
-  Radio,
-  Modal,
-  Icon,
-  TreeSelect,
-  Tooltip,
-  InputNumber,
-  Row,
-  Col,
-} from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Card, Radio, Modal, TreeSelect, Tooltip, InputNumber, Row, Col } from 'antd';
 
 import MenuAction from './MenuAction';
 import MenuResource from './MenuResource';
@@ -133,7 +124,7 @@ class MenuCard extends PureComponent {
                     </Col>
                     <Col span={4} style={{ textAlign: 'center' }}>
                       <Tooltip title="图标仅支持官方Icon图标">
-                        <Icon type="question-circle" />
+                        <QuestionCircleOutlined />
                       </Tooltip>
                     </Col>
                   </Row>

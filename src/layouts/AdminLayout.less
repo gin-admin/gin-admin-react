@@ -30,13 +30,15 @@
   }
 }
 
-i.trigger {
+.foldout {
+  float: left;
   color: #fff;
   font-size: 20px;
   line-height: 64px;
   cursor: pointer;
   transition: all 0.3s;
   padding: 0 24px;
+  margin-left: -50px;
   &:hover {
     background: #072f53;
   }
@@ -84,12 +86,6 @@ i.trigger {
   }
 }
 
-:global {
-  .ant-layout {
-    overflow-x: hidden;
-  }
-}
-
 .menu {
   :global(.anticon) {
     margin-right: 8px;
@@ -97,7 +93,12 @@ i.trigger {
 }
 
 .sider {
-  min-height: 100vh;
   position: relative;
   z-index: 10;
+  min-height: 100vh;
+  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+}
+
+.content {
+  padding: 24px;
 }

@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Icon, Alert } from 'antd';
+import { CodeOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Button, Alert } from 'antd';
 import { md5Hash } from '../../utils/utils';
 
 import styles from './Index.less';
@@ -78,7 +81,7 @@ class Login extends PureComponent {
             })(
               <Input
                 size="large"
-                prefix={<Icon type="user" className={styles.prefixIcon} />}
+                prefix={<UserOutlined className={styles.prefixIcon} />}
                 placeholder="请输入用户名"
               />
             )}
@@ -94,7 +97,7 @@ class Login extends PureComponent {
             })(
               <Input
                 size="large"
-                prefix={<Icon type="lock" className={styles.prefixIcon} />}
+                prefix={<LockOutlined className={styles.prefixIcon} />}
                 type="password"
                 placeholder="请输入密码"
               />
@@ -113,7 +116,7 @@ class Login extends PureComponent {
                 <Input
                   style={{ width: '60%', marginRight: 10 }}
                   size="large"
-                  prefix={<Icon type="code" className={styles.prefixIcon} />}
+                  prefix={<CodeOutlined className={styles.prefixIcon} />}
                   placeholder="请输入验证码"
                 />
               )}

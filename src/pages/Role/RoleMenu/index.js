@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Table } from 'antd';
-import EditableCell from './EditableCell';
-
 import * as menuService from '@/services/menu';
+import EditableCell from './EditableCell';
 
 export default class RoleMenu extends PureComponent {
   constructor(props) {

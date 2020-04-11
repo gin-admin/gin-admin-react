@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Form, Input, Modal, message } from 'antd';
-import { md5Hash } from '../../utils/utils';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Modal, message } from 'antd';
 import { updatePwd } from '@/services/login';
+import { md5Hash } from '../../utils/utils';
 
 @Form.create()
 class UpdatePasswordDialog extends PureComponent {

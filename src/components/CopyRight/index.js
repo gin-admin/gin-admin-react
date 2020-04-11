@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon } from 'antd';
+import { CopyrightOutlined } from '@ant-design/icons';
 
 export default ({ title }) => (
   <div>
-    Copyright <Icon type="copyright" /> {title}
+    Copyright <CopyrightOutlined /> {title}
   </div>
 );

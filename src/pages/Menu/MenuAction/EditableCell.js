@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Input, Form } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input } from 'antd';
 
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
