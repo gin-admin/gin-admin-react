@@ -20,10 +20,24 @@ class RoleCard extends PureComponent {
       }
       const formData = { ...values };
       formData.sequence = parseInt(formData.sequence, 10);
-      if (!formData.menus || formData.menus.length === 0) {
+      formData.status = 1;
+      if (!formData.role_menus || formData.role_menus.length === 0) {
         message.warning('请选择菜单权限！');
         return;
       }
+
+      const roleMenus = [];
+      formData.role_menus.forEach(item => {
+        if (item.actions && item.actions.length > 0) {
+          item.actions.forEach(v => {
+            roleMenus.push({ menu_id: item.menu_id, action_id: v });
+          });
+        } else {
+          roleMenus.push({ menu_id: item.menu_id });
+        }
+      });
+      formData.role_menus = roleMenus;
+
       onSubmit(formData);
     });
   };
@@ -42,10 +56,19 @@ class RoleCard extends PureComponent {
 
     const formItemLayout = {
       labelCol: {
-        span: 4,
+        span: 6,
       },
       wrapperCol: {
         span: 18,
+      },
+    };
+
+    const formItemLayout2 = {
+      labelCol: {
+        span: 3,
+      },
+      wrapperCol: {
+        span: 21,
       },
     };
 
@@ -64,7 +87,7 @@ class RoleCard extends PureComponent {
       >
         <Form>
           <Row>
-            <Col>
+            <Col span={12}>
               <Form.Item {...formItemLayout} label="角色名称">
                 {getFieldDecorator('name', {
                   initialValue: formData.name,
@@ -77,7 +100,7 @@ class RoleCard extends PureComponent {
                 })(<Input placeholder="请输入角色名称" />)}
               </Form.Item>
             </Col>
-            <Col>
+            <Col span={12}>
               <Form.Item {...formItemLayout} label="排序值">
                 {getFieldDecorator('sequence', {
                   initialValue: formData.sequence ? formData.sequence.toString() : '1000000',
@@ -90,23 +113,19 @@ class RoleCard extends PureComponent {
                 })(<InputNumber min={1} style={{ width: '100%' }} />)}
               </Form.Item>
             </Col>
-            <Col>
-              <Form.Item {...formItemLayout} label="备注">
-                {getFieldDecorator('memo', {
-                  initialValue: formData.memo,
-                })(<Input.TextArea rows={2} placeholder="请输入备注" />)}
-              </Form.Item>
-            </Col>
           </Row>
-          <Row>
-            <Col span={24}>
-              <Card title="选择菜单权限" bordered={false}>
-                {getFieldDecorator('menus', {
-                  initialValue: formData.menus,
-                })(<RoleMenu />)}
-              </Card>
-            </Col>
-          </Row>
+          <Form.Item {...formItemLayout2} label="备注">
+            {getFieldDecorator('memo', {
+              initialValue: formData.memo,
+            })(<Input.TextArea rows={2} placeholder="请输入备注" />)}
+          </Form.Item>
+          <Form.Item>
+            <Card title="选择菜单权限" bordered={false}>
+              {getFieldDecorator('role_menus', {
+                initialValue: formData.role_menus,
+              })(<RoleMenu />)}
+            </Card>
+          </Form.Item>
         </Form>
       </Modal>
     );

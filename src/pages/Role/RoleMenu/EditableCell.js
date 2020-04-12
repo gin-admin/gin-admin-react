@@ -32,32 +32,8 @@ export default class EditableCell extends PureComponent {
       >
         <Row>
           {record.actions.map(v => (
-            <Col key={v.code}>
-              <Checkbox value={v.code}>{v.name}</Checkbox>
-            </Col>
-          ))}
-        </Row>
-      </Checkbox.Group>
-    );
-  };
-
-  renderResource = () => {
-    const { record } = this.props;
-    if (!record.resources || record.resources.length === 0) {
-      return null;
-    }
-
-    const item = this.findItem();
-    return (
-      <Checkbox.Group
-        disabled={!item}
-        value={item ? item.resources : []}
-        onChange={this.handleChange}
-      >
-        <Row>
-          {record.resources.map(v => (
-            <Col key={v.code}>
-              <Checkbox value={v.code}>{v.name}</Checkbox>
+            <Col key={v.record_id}>
+              <Checkbox value={v.record_id}>{v.name}</Checkbox>
             </Col>
           ))}
         </Row>
@@ -70,8 +46,7 @@ export default class EditableCell extends PureComponent {
     return (
       <td {...restProps}>
         {dataIndex === 'actions' && this.renderAction()}
-        {dataIndex === 'resources' && this.renderResource()}
-        {!(dataIndex === 'actions' || dataIndex === 'resources') && restProps.children}
+        {!(dataIndex === 'actions') && restProps.children}
       </td>
     );
   }

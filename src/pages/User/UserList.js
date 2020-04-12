@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge, Radio } from 'antd';
+import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PButton from '@/components/PermButton';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import UserCard from './UserCard';
@@ -178,41 +178,21 @@ class UserList extends PureComponent {
       <Form onSubmit={this.onSearchFormSubmit}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label="用户名">
-              {getFieldDecorator('userName')(<Input placeholder="请输入" />)}
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="真实姓名">
-              {getFieldDecorator('realName')(<Input placeholder="请输入" />)}
+            <Form.Item label="模糊查询">
+              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="所属角色">{getFieldDecorator('roleIDs')(<RoleSelect />)}</Form.Item>
           </Col>
-        </Row>
-        <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label="用户状态">
-              {getFieldDecorator('status', { initialValue: '0' })(
-                <Radio.Group>
-                  <Radio value="0">全部</Radio>
-                  <Radio value="1">正常</Radio>
-                  <Radio value="2">停用</Radio>
-                </Radio.Group>
-              )}
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <div style={{ overflow: 'hidden' }}>
-              <span style={{ marginBottom: 24 }}>
-                <Button type="primary" htmlType="submit">
-                  查询
-                </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
-                  重置
-                </Button>
-              </span>
+            <div style={{ overflow: 'hidden', paddingTop: 4 }}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                重置
+              </Button>
             </div>
           </Col>
         </Row>
@@ -290,14 +270,13 @@ class UserList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              <PButton code="add" icon="plus" type="primary" onClick={() => this.onAddClick()}>
+              <PButton code="add" type="primary" onClick={() => this.onAddClick()}>
                 新建
               </PButton>
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"
                   code="edit"
-                  icon="edit"
                   onClick={() => this.onItemEditClick(selectedRows[0])}
                 >
                   编辑
@@ -305,7 +284,6 @@ class UserList extends PureComponent {
                 <PButton
                   key="del"
                   code="del"
-                  icon="delete"
                   type="danger"
                   onClick={() => this.onItemDelClick(selectedRows[0])}
                 >
@@ -315,7 +293,6 @@ class UserList extends PureComponent {
                   <PButton
                     key="enable"
                     code="enable"
-                    icon="check"
                     onClick={() => this.onItemEnableClick(selectedRows[0])}
                   >
                     启用
@@ -325,7 +302,6 @@ class UserList extends PureComponent {
                   <PButton
                     key="disable"
                     code="disable"
-                    icon="stop"
                     type="danger"
                     onClick={() => this.onItemDisableClick(selectedRows[0])}
                   >

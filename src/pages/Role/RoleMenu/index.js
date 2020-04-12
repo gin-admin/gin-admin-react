@@ -11,19 +11,12 @@ export default class RoleMenu extends PureComponent {
       {
         title: '菜单名称',
         dataIndex: 'name',
-        width: '30%',
+        width: '35%',
       },
       {
         title: '动作权限',
         dataIndex: 'actions',
         editable: true,
-        width: '30%',
-      },
-      {
-        title: '资源权限',
-        dataIndex: 'resources',
-        editable: true,
-        width: '40%',
       },
     ];
 
@@ -34,7 +27,7 @@ export default class RoleMenu extends PureComponent {
   }
 
   componentDidMount() {
-    menuService.queryTree({ includeActions: '1', includeResources: '1' }).then(data => {
+    menuService.queryTree().then(data => {
       const list = data.list || [];
       this.setState({ menuData: this.fillData(list) });
     });
@@ -117,8 +110,7 @@ export default class RoleMenu extends PureComponent {
       if (!exists) {
         const item = {
           menu_id: addData[i].record_id,
-          actions: addData[i].actions ? addData[i].actions.map(v => v.code) : [],
-          resources: addData[i].resources ? addData[i].resources.map(v => v.code) : [],
+          actions: addData[i].actions ? addData[i].actions.map(v => v.record_id) : [],
         };
         list.push(item);
       }
@@ -169,8 +161,7 @@ export default class RoleMenu extends PureComponent {
       list = selectRows.map(vv => {
         const item = {
           menu_id: vv.record_id,
-          actions: vv.actions ? vv.actions.map(v => v.code) : [],
-          resources: vv.resources ? vv.resources.map(v => v.code) : [],
+          actions: vv.actions ? vv.actions.map(v => v.record_id) : [],
         };
         return item;
       });

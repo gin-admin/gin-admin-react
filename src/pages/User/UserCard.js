@@ -102,8 +102,8 @@ class UserCard extends PureComponent {
             })(<Input placeholder="请输入真实姓名" />)}
           </Form.Item>
           <Form.Item {...formItemLayout} label="所属角色">
-            {getFieldDecorator('roles', {
-              initialValue: formData.roles,
+            {getFieldDecorator('user_roles', {
+              initialValue: formData.user_roles,
               rules: [
                 {
                   required: true,
