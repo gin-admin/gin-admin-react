@@ -34,3 +34,15 @@ export async function del(params) {
     method: 'DELETE',
   });
 }
+
+export async function enable(params) {
+  return request(`/v1/${router}/${params.record_id}/enable`, {
+    method: 'PATCH',
+  });
+}
+
+export async function disable(params) {
+  return request(`/v1/${router}/${params.record_id}/disable`, {
+    method: 'PATCH',
+  });
+}

@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Modal, Input, Row, Col, Tooltip } from 'antd';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Modal, Input, Row, Col, Tooltip } from 'antd';
 
 @Form.create()
-class AddDialog extends PureComponent {
+class TplDialog extends PureComponent {
   handleCancel = () => {
     const { onCancel } = this.props;
     if (onCancel) {
@@ -17,17 +17,14 @@ class AddDialog extends PureComponent {
     const { form, onSubmit } = this.props;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const formData = { ...values };
-        onSubmit(formData);
+        onSubmit({ ...values });
       }
     });
   };
 
   render() {
-    const {
-      visible,
-      form: { getFieldDecorator },
-    } = this.props;
+    const { visible, form } = this.props;
+    const { getFieldDecorator } = form;
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -41,7 +38,7 @@ class AddDialog extends PureComponent {
 
     return (
       <Modal
-        title="菜单资源模板"
+        title="快速创建模板"
         width={450}
         visible={visible}
         maskClosable={false}
@@ -52,39 +49,21 @@ class AddDialog extends PureComponent {
         bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', overflowY: 'auto' }}
       >
         <Form>
-          <Form.Item {...formItemLayout} label="资源名">
+          <Form.Item label="接口路径" {...formItemLayout}>
             <Row>
               <Col span={20}>
-                {getFieldDecorator('name', {
+                {getFieldDecorator('path', {
+                  initialValue: '/api/v1/',
                   rules: [
                     {
                       required: true,
-                      message: '请输入资源名',
+                      message: '请输入接口路径',
                     },
                   ],
-                })(<Input placeholder="请输入资源名" />)}
+                })(<Input placeholder="请输入" />)}
               </Col>
               <Col span={4} style={{ textAlign: 'center' }}>
-                <Tooltip title="例：用户数据">
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </Col>
-            </Row>
-          </Form.Item>
-          <Form.Item {...formItemLayout} label="资源路由">
-            <Row>
-              <Col span={20}>
-                {getFieldDecorator('router', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入资源路由',
-                    },
-                  ],
-                })(<Input placeholder="请输入资源路由" />)}
-              </Col>
-              <Col span={4} style={{ textAlign: 'center' }}>
-                <Tooltip title="例：/api/v1/users">
+                <Tooltip title="例：/api/v1/demos">
                   <QuestionCircleOutlined />
                 </Tooltip>
               </Col>
@@ -96,4 +75,4 @@ class AddDialog extends PureComponent {
   }
 }
 
-export default AddDialog;
+export default TplDialog;

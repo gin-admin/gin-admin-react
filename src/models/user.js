@@ -108,12 +108,18 @@ export default {
 
       const params = { ...payload };
       const formType = yield select(state => state.user.formType);
-      let response;
+      let success = false;
       if (formType === 'E') {
         params.record_id = yield select(state => state.user.formID);
-        response = yield call(userService.update, params);
+        const response = yield call(userService.update, params);
+        if (response.status === 'OK') {
+          success = true;
+        }
       } else {
-        response = yield call(userService.create, params);
+        const response = yield call(userService.create, params);
+        if (response.record_id && response.record_id !== '') {
+          success = true;
+        }
       }
 
       yield put({
@@ -121,7 +127,7 @@ export default {
         payload: false,
       });
 
-      if (response.record_id && response.record_id !== '') {
+      if (success) {
         message.success('保存成功');
         yield put({
           type: 'changeFormVisible',

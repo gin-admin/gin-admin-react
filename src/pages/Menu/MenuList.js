@@ -2,11 +2,11 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Radio, Modal, Layout, Tree } from 'antd';
+import { Row, Col, Card, Input, Button, Table, Modal, Layout, Tree, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
+import { formatDate } from '@/utils/utils';
 import MenuCard from './MenuCard';
-
 import styles from './MenuList.less';
 
 @connect(({ menu, loading }) => ({
@@ -32,6 +32,20 @@ class MenuList extends PureComponent {
       pagination: {},
     });
   }
+
+  onItemDisableClick = item => {
+    this.dispatch({
+      type: 'menu/changeStatus',
+      payload: { record_id: item.record_id, status: 2 },
+    });
+  };
+
+  onItemEnableClick = item => {
+    this.dispatch({
+      type: 'menu/changeStatus',
+      payload: { record_id: item.record_id, status: 1 },
+    });
+  };
 
   handleEditClick = () => {
     const { selectedRows } = this.state;
@@ -194,36 +208,21 @@ class MenuList extends PureComponent {
       form: { getFieldDecorator },
     } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit} layout="inline">
-        <Row gutter={8}>
+      <Form onSubmit={this.onSearchFormSubmit}>
+        <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label="菜单名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <Form.Item>
+              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
             </Form.Item>
           </Col>
-          <Col span={10}>
-            <Form.Item label="隐藏状态">
-              {getFieldDecorator('hidden', {
-                initialValue: '-1',
-              })(
-                <Radio.Group>
-                  <Radio value="-1">全部</Radio>
-                  <Radio value="0">显示</Radio>
-                  <Radio value="1">隐藏</Radio>
-                </Radio.Group>
-              )}
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <div style={{ overflow: 'hidden' }}>
-              <span style={{ marginBottom: 24 }}>
-                <Button type="primary" htmlType="submit">
-                  查询
-                </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
-                  重置
-                </Button>
-              </span>
+          <Col span={8}>
+            <div style={{ overflow: 'hidden', paddingTop: 4 }}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                重置
+              </Button>
             </div>
           </Col>
         </Row>
@@ -241,30 +240,24 @@ class MenuList extends PureComponent {
       },
     } = this.props;
 
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, selectedRows } = this.state;
 
     const columns = [
       {
         title: '菜单名称',
         dataIndex: 'name',
-        width: 150,
+        width: 130,
+        render: (val, row) => {
+          if (row.show_status !== 1) {
+            return <Badge status="default" text={val} />;
+          }
+          return <span>{val}</span>;
+        },
       },
       {
         title: '排序值',
         dataIndex: 'sequence',
         width: 100,
-      },
-      {
-        title: '隐藏状态',
-        dataIndex: 'hidden',
-        width: 100,
-        render: val => {
-          let title = '显示';
-          if (val === 1) {
-            title = '隐藏';
-          }
-          return <span>{title}</span>;
-        },
       },
       {
         title: '菜单图标',
@@ -274,6 +267,28 @@ class MenuList extends PureComponent {
       {
         title: '访问路由',
         dataIndex: 'router',
+        width: 150,
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        width: 80,
+        render: val => {
+          if (val === 1) {
+            return <Badge status="success" text="启用" />;
+          }
+          return <Badge status="error" text="停用" />;
+        },
+      },
+      {
+        title: '创建时间',
+        width: 100,
+        dataIndex: 'created_at',
+        render: val => <span>{formatDate(val, 'YYYY-MM-DD')}</span>,
+      },
+      {
+        title: '备注',
+        dataIndex: 'memo',
       },
     ];
 
@@ -290,8 +305,13 @@ class MenuList extends PureComponent {
       <PageHeaderLayout title="菜单管理" breadcrumbList={breadcrumbList}>
         <Layout>
           <Layout.Sider
-            width={200}
-            style={{ background: '#fff', borderRight: '1px solid lightGray' }}
+            width={180}
+            style={{
+              background: '#fff',
+              borderRight: '1px solid lightGray',
+              padding: 15,
+              overflow: 'auto',
+            }}
           >
             <Tree
               expandedKeys={expandedKeys}
@@ -305,7 +325,7 @@ class MenuList extends PureComponent {
                 } = this.props;
 
                 const item = {
-                  parentID: '',
+                  parentID: undefined,
                 };
 
                 if (keys.length > 0) {
@@ -333,32 +353,40 @@ class MenuList extends PureComponent {
               <div className={styles.tableList}>
                 <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
                 <div className={styles.tableListOperator}>
-                  <PButton
-                    code="add"
-                    icon="plus"
-                    type="primary"
-                    onClick={() => this.handleAddClick()}
-                  >
+                  <PButton code="add" type="primary" onClick={() => this.handleAddClick()}>
                     新建
                   </PButton>
                   {selectedRowKeys.length === 1 && [
-                    <PButton
-                      key="edit"
-                      code="edit"
-                      icon="edit"
-                      onClick={() => this.handleEditClick()}
-                    >
+                    <PButton key="edit" code="edit" onClick={() => this.handleEditClick()}>
                       编辑
                     </PButton>,
                     <PButton
                       key="del"
                       code="del"
-                      icon="delete"
                       type="danger"
                       onClick={() => this.handleDelClick()}
                     >
                       删除
                     </PButton>,
+                    selectedRows[0].status === 2 && (
+                      <PButton
+                        key="enable"
+                        code="enable"
+                        onClick={() => this.onItemEnableClick(selectedRows[0])}
+                      >
+                        启用
+                      </PButton>
+                    ),
+                    selectedRows[0].status === 1 && (
+                      <PButton
+                        key="disable"
+                        code="disable"
+                        type="danger"
+                        onClick={() => this.onItemDisableClick(selectedRows[0])}
+                      >
+                        禁用
+                      </PButton>
+                    ),
                   ]}
                 </div>
                 <Table

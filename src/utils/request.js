@@ -1,7 +1,10 @@
 import axios from 'axios';
+import { stringify } from 'querystring';
+import { history } from 'umi';
 import { notification } from 'antd';
 import moment from 'moment';
 import store from './store';
+import { getPageQuery } from './utils';
 
 export const baseURL = '/api';
 
@@ -25,7 +28,7 @@ async function getAccessToken() {
   if (checkAccessTokenExpires(tokenInfo.expires_at) === 0) {
     return axios
       .request({
-        url: `${baseURL}/v1/pub/refresh_token`,
+        url: `${baseURL}/v1/pub/refresh-token`,
         method: 'POST',
         headers: {
           Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
@@ -41,6 +44,19 @@ async function getAccessToken() {
       });
   }
   return `${tokenInfo.token_type} ${tokenInfo.access_token}`;
+}
+
+function logout() {
+  const { redirect } = getPageQuery(); // Note: There may be security issues, please note
+
+  if (window.location.pathname !== '/user/login' && !redirect) {
+    history.replace({
+      pathname: '/user/login',
+      search: stringify({
+        redirect: window.location.href,
+      }),
+    });
+  }
 }
 
 export default async function request(url, options) {
@@ -77,8 +93,7 @@ export default async function request(url, options) {
         error: { code },
       } = data;
       if (code === 9999) {
-        /* eslint-disable no-underscore-dangle */
-        window.g_app._store.dispatch({ type: 'login/logout' });
+        logout();
         return {};
       }
     }

@@ -1,6 +1,9 @@
+import { parse } from 'querystring';
 import moment from 'moment';
 import md5 from 'md5';
 import uuid from 'uuid/v4';
+
+export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
 // 格式化时间戳
 export function formatTimestamp(val, format) {

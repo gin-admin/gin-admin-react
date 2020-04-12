@@ -24,21 +24,21 @@ export default class MenuAction extends PureComponent {
 
     this.columns = [
       {
-        title: '请求方式',
-        dataIndex: 'method',
+        title: '动作编号',
+        dataIndex: 'code',
         editable: true,
-        width: '30%',
+        width: '40%',
       },
       {
-        title: '请求路径',
-        dataIndex: 'path',
+        title: '动作名称',
+        dataIndex: 'name',
         editable: true,
         width: '45%',
       },
       {
         title: '操作',
         dataIndex: 'key',
-        width: '25%',
+        width: '10%',
         render: (_, record) => {
           const { dataSource } = this.state;
           if (dataSource.length === 0) {
@@ -55,20 +55,18 @@ export default class MenuAction extends PureComponent {
 
     this.state = {
       dataSource: fillKey(props.value),
-      addVisible: false,
     };
   }
 
   static getDerivedStateFromProps(nextProps, state) {
     if ('value' in nextProps) {
-      return { ...state, dataSource: fillKey(nextProps.value) };
+      return {
+        ...state,
+        dataSource: fillKey(nextProps.value),
+      };
     }
     return state;
   }
-
-  handleAddCancel = () => {
-    this.setState({ addVisible: false });
-  };
 
   handleDelete = key => {
     const { dataSource } = this.state;
@@ -78,14 +76,60 @@ export default class MenuAction extends PureComponent {
     });
   };
 
+  handleAddTpl = () => {
+    const tplData = [
+      {
+        code: 'add',
+        name: '新增',
+      },
+      {
+        code: 'edit',
+        name: '编辑',
+      },
+      {
+        code: 'del',
+        name: '删除',
+      },
+      {
+        code: 'query',
+        name: '查询',
+      },
+    ];
+
+    const newData = tplData.map(v => ({ key: v.code, ...v }));
+
+    const { dataSource } = this.state;
+    const data = [...dataSource];
+    for (let i = 0; i < newData.length; i += 1) {
+      let exists = false;
+      for (let j = 0; j < dataSource.length; j += 1) {
+        if (dataSource[j].key === newData[i].key) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        data.push(newData[i]);
+      }
+    }
+
+    this.setState(
+      {
+        dataSource: data,
+      },
+      () => {
+        this.triggerChange(data);
+      }
+    );
+  };
+
   handleAdd = () => {
     const { dataSource } = this.state;
     const item = {
       key: newUUID(),
-      method: '',
-      path: '',
+      code: '',
+      name: '',
     };
-
     const data = [...dataSource, item];
     this.setState(
       {
@@ -146,6 +190,9 @@ export default class MenuAction extends PureComponent {
         <div className={styles.tableListOperator}>
           <Button onClick={this.handleAdd} size="small" type="primary">
             新增
+          </Button>
+          <Button onClick={this.handleAddTpl} size="small" type="primary">
+            使用模板
           </Button>
         </div>
         <Table

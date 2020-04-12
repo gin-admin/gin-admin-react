@@ -1,9 +1,7 @@
-import { routerRedux } from 'dva/router';
+import { history } from 'umi';
 import { stringify, parse } from 'qs';
 import store from '@/utils/store';
 import * as loginService from '@/services/login';
-
-let isLogout = false;
 
 export default {
   namespace: 'login',
@@ -72,31 +70,22 @@ export default {
         payload: false,
       });
 
-      isLogout = false;
       const params = parse(window.location.href.split('?')[1]);
       const { redirect } = params;
       if (redirect) {
         window.location.href = redirect;
         return;
       }
-      yield put(routerRedux.replace('/'));
+      history.replace('/');
     },
-    *logout(_, { put, call }) {
-      if (isLogout) {
-        return;
-      }
-      isLogout = true;
-
+    *logout(_, { call }) {
       const response = yield call(loginService.logout);
       if (response.status === 'OK') {
-        yield put(
-          routerRedux.push({
-            pathname: '/user/login',
-            search: stringify({
-              redirect: window.location.href,
-            }),
-          })
-        );
+        history.push('/user/login', {
+          search: stringify({
+            redirect: window.location.href,
+          }),
+        });
       }
       store.clearAccessToken();
     },

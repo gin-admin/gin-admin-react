@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Table, Button, Popconfirm } from 'antd';
+import { Table, Button, Popconfirm, Divider } from 'antd';
 import { newUUID } from '@/utils/utils';
-import { EditableCell, EditableFormRow } from './EditableCell';
-
+import FormDialog from './FormDialog';
+import TplDialog from './TplDialog';
 import styles from './index.less';
 
 function fillKey(data) {
@@ -19,44 +19,12 @@ function fillKey(data) {
 }
 
 export default class MenuAction extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.columns = [
-      {
-        title: '动作编号',
-        dataIndex: 'code',
-        editable: true,
-        width: '40%',
-      },
-      {
-        title: '动作名称',
-        dataIndex: 'name',
-        editable: true,
-        width: '45%',
-      },
-      {
-        title: '操作',
-        dataIndex: 'key',
-        width: '10%',
-        render: (_, record) => {
-          const { dataSource } = this.state;
-          if (dataSource.length === 0) {
-            return null;
-          }
-          return (
-            <Popconfirm title="确定要删除该数据吗?" onConfirm={() => this.handleDelete(record.key)}>
-              <a>删除</a>
-            </Popconfirm>
-          );
-        },
-      },
-    ];
-
-    this.state = {
-      dataSource: fillKey(props.value),
-    };
-  }
+  state = {
+    dataSource: [],
+    formVisible: false,
+    formData: {},
+    tplVisible: false,
+  };
 
   static getDerivedStateFromProps(nextProps, state) {
     if ('value' in nextProps) {
@@ -76,46 +44,87 @@ export default class MenuAction extends PureComponent {
     });
   };
 
-  handleAddTpl = () => {
+  handleEdit = item => {
+    this.setState({
+      formVisible: true,
+      formData: item,
+    });
+  };
+
+  handleFormCancel = () => {
+    this.setState({ formVisible: false });
+  };
+
+  handleFormSubmit = formData => {
+    const { dataSource } = this.state;
+    const data = [...dataSource];
+    let exists = false;
+    for (let i = 0; i < data.length; i += 1) {
+      if (data[i].code === formData.code) {
+        exists = true;
+        data[i] = { key: formData.code, ...formData };
+        break;
+      }
+    }
+    if (!exists) {
+      data.push({ key: formData.code, record_id: newUUID(), ...formData });
+    }
+    this.setState({ dataSource: data, formVisible: false }, () => {
+      this.triggerChange(data);
+    });
+  };
+
+  handleAdd = () => {
+    this.setState({ formVisible: true, formData: {} });
+  };
+
+  handleTplCancel = () => {
+    this.setState({ tplVisible: false });
+  };
+
+  handleTplSubmit = formData => {
+    const { path } = formData;
     const tplData = [
       {
         code: 'add',
         name: '新增',
+        resources: [{ method: 'POST', path }],
       },
       {
         code: 'edit',
         name: '编辑',
+        resources: [{ method: 'GET', path: `${path}/:id` }, { method: 'PUT', path: `${path}/:id` }],
       },
       {
         code: 'del',
         name: '删除',
+        resources: [{ method: 'DELETE', path: `${path}/:id` }],
       },
       {
         code: 'query',
         name: '查询',
+        resources: [{ method: 'GET', path }],
       },
     ];
 
     const newData = tplData.map(v => ({ key: v.code, ...v }));
-
     const { dataSource } = this.state;
     const data = [...dataSource];
+    const mDataSource = data.reduce((m, cur) => {
+      const nm = { ...m };
+      nm[cur.code] = cur;
+      return nm;
+    }, {});
     for (let i = 0; i < newData.length; i += 1) {
-      let exists = false;
-      for (let j = 0; j < dataSource.length; j += 1) {
-        if (dataSource[j].key === newData[i].key) {
-          exists = true;
-          break;
-        }
-      }
-      if (!exists) {
-        data.push(newData[i]);
+      if (!mDataSource[newData[i].key]) {
+        data.push({ record_id: newUUID(), ...newData[i] });
       }
     }
 
     this.setState(
       {
         dataSource: data,
+        tplVisible: false,
       },
       () => {
         this.triggerChange(data);
@@ -123,22 +132,8 @@ export default class MenuAction extends PureComponent {
     );
   };
 
-  handleAdd = () => {
-    const { dataSource } = this.state;
-    const item = {
-      key: newUUID(),
-      code: '',
-      name: '',
-    };
-    const data = [...dataSource, item];
-    this.setState(
-      {
-        dataSource: data,
-      },
-      () => {
-        this.triggerChange(data);
-      }
-    );
+  handleTplAdd = () => {
+    this.setState({ tplVisible: true });
   };
 
   handleSave = row => {
@@ -163,45 +158,64 @@ export default class MenuAction extends PureComponent {
   };
 
   render() {
-    const { dataSource } = this.state;
-    const components = {
-      body: {
-        row: EditableFormRow,
-        cell: EditableCell,
+    const { dataSource, tplVisible, formData, formVisible } = this.state;
+
+    const columns = [
+      {
+        title: '动作编号',
+        dataIndex: 'code',
+        width: '35%',
       },
-    };
-    const columns = this.columns.map(col => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
-        ...col,
-        onCell: record => ({
-          record,
-          editable: col.editable,
-          dataIndex: col.dataIndex,
-          title: col.title,
-          handleSave: this.handleSave,
-        }),
-      };
-    });
+      {
+        title: '动作名称',
+        dataIndex: 'name',
+        width: '35%',
+      },
+      {
+        title: '操作',
+        dataIndex: 'key',
+        width: '30%',
+        render: (_, record) => {
+          return [
+            <a href="#" onClick={() => this.handleEdit(record)}>
+              编辑
+            </a>,
+            <Divider type="vertical" />,
+            <Popconfirm title="确定要删除该数据吗?" onConfirm={() => this.handleDelete(record.key)}>
+              <a href="#">删除</a>
+            </Popconfirm>,
+          ];
+        },
+      },
+    ];
+
     return (
       <div className={styles.tableList}>
         <div className={styles.tableListOperator}>
           <Button onClick={this.handleAdd} size="small" type="primary">
             新增
           </Button>
-          <Button onClick={this.handleAddTpl} size="small" type="primary">
-            使用模板
+          <Button onClick={this.handleTplAdd} size="small" type="primary">
+            快速模板
           </Button>
         </div>
         <Table
           rowKey={record => record.key}
-          components={components}
           bordered
           dataSource={dataSource}
           columns={columns}
           pagination={false}
+        />
+        <TplDialog
+          visible={tplVisible}
+          onSubmit={this.handleTplSubmit}
+          onCancel={this.handleTplCancel}
+        />
+        <FormDialog
+          visible={formVisible}
+          formData={formData}
+          onSubmit={this.handleFormSubmit}
+          onCancel={this.handleFormCancel}
         />
       </div>
     );

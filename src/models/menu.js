@@ -100,7 +100,7 @@ export default {
         const search = yield select(state => state.menu.search);
         yield put({
           type: 'saveFormData',
-          payload: { parent_id: search.parent_id ? search.parent_id : '' },
+          payload: { parent_id: search.parentID ? search.parentID : '' },
         });
       }
     },
@@ -120,15 +120,17 @@ export default {
       const params = { ...payload };
       const formType = yield select(state => state.menu.formType);
       let success = false;
-      let response;
       if (formType === 'E') {
         params.record_id = yield select(state => state.menu.formID);
-        response = yield call(menuService.update, params);
+        const response = yield call(menuService.update, params);
+        if (response.status === 'OK') {
+          success = true;
+        }
       } else {
-        response = yield call(menuService.create, params);
-      }
-      if (response.record_id && response.record_id !== '') {
-        success = true;
+        const response = yield call(menuService.create, params);
+        if (response.record_id && response.record_id !== '') {
+          success = true;
+        }
       }
 
       yield put({
@@ -165,6 +167,37 @@ export default {
         type: 'saveTreeData',
         payload: response.list || [],
       });
+    },
+    *changeStatus({ payload }, { call, put, select }) {
+      let response;
+      if (payload.status === 1) {
+        response = yield call(menuService.enable, payload);
+      } else {
+        response = yield call(menuService.disable, payload);
+      }
+
+      if (response.status === 'OK') {
+        let msg = '启用成功';
+        if (payload.status === 2) {
+          msg = '停用成功';
+        }
+        message.success(msg);
+        const data = yield select(state => state.menu.data);
+        const newData = { list: [], pagination: data.pagination };
+
+        for (let i = 0; i < data.list.length; i += 1) {
+          const item = data.list[i];
+          if (item.record_id === payload.record_id) {
+            item.status = payload.status;
+          }
+          newData.list.push(item);
+        }
+
+        yield put({
+          type: 'saveData',
+          payload: newData,
+        });
+      }
     },
   },
   reducers: {

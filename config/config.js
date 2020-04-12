@@ -28,7 +28,7 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'http://47.105.189.180:8080/',
+      target: 'http://127.0.0.1:18088/',
       changeOrigin: true,
     },
   },

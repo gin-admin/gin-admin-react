@@ -4,9 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { Input, Card, Radio, Modal, TreeSelect, Tooltip, InputNumber, Row, Col } from 'antd';
-
 import MenuAction from './MenuAction';
-import MenuResource from './MenuResource';
 
 @connect(({ menu }) => ({
   menu,
@@ -18,7 +16,8 @@ class MenuCard extends PureComponent {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const formData = { ...values };
-        formData.hidden = parseInt(formData.hidden, 10);
+        formData.show_status = parseInt(formData.show_status, 10);
+        formData.status = parseInt(formData.status, 10);
         formData.sequence = parseInt(formData.sequence, 10);
         onSubmit(formData);
       }
@@ -64,7 +63,7 @@ class MenuCard extends PureComponent {
     return (
       <Modal
         title={formTitle}
-        width={900}
+        width={1000}
         visible={formVisible}
         maskClosable={false}
         confirmLoading={submitting}
@@ -109,32 +108,52 @@ class MenuCard extends PureComponent {
             </Row>
             <Row>
               <Col span={12}>
+                <Form.Item {...formItemLayout} label="访问路径">
+                  {getFieldDecorator('router', {
+                    initialValue: formData.router,
+                  })(<Input placeholder="请输入" />)}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
                 <Form.Item {...formItemLayout} label="菜单图标">
                   <Row>
                     <Col span={20}>
                       {getFieldDecorator('icon', {
                         initialValue: formData.icon,
-                        rules: [
-                          {
-                            required: true,
-                            message: '请输入菜单图标',
-                          },
-                        ],
                       })(<Input placeholder="请输入" />)}
                     </Col>
                     <Col span={4} style={{ textAlign: 'center' }}>
-                      <Tooltip title="图标仅支持官方Icon图标">
+                      <Tooltip title="图标仅支持官方Icon图标(V3版本)">
                         <QuestionCircleOutlined />
                       </Tooltip>
                     </Col>
                   </Row>
                 </Form.Item>
               </Col>
+            </Row>
+            <Row>
               <Col span={12}>
-                <Form.Item {...formItemLayout} label="访问路由">
-                  {getFieldDecorator('router', {
-                    initialValue: formData.router,
-                  })(<Input placeholder="请输入" />)}
+                <Form.Item {...formItemLayout} label="是否显示">
+                  {getFieldDecorator('show_status', {
+                    initialValue: formData.show_status ? formData.show_status.toString() : '1',
+                  })(
+                    <Radio.Group>
+                      <Radio value="1">显示</Radio>
+                      <Radio value="2">隐藏</Radio>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item {...formItemLayout} label="状态">
+                  {getFieldDecorator('status', {
+                    initialValue: formData.status ? formData.status.toString() : '1',
+                  })(
+                    <Radio.Group>
+                      <Radio value="1">启用</Radio>
+                      <Radio value="2">禁用</Radio>
+                    </Radio.Group>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -149,37 +168,23 @@ class MenuCard extends PureComponent {
                         message: '请输入排序值',
                       },
                     ],
-                  })(<InputNumber min={1} style={{ width: '80%' }} />)}
+                  })(<InputNumber min={1} style={{ width: '100%' }} />)}
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item {...formItemLayout} label="隐藏状态">
-                  {getFieldDecorator('hidden', {
-                    initialValue: formData.hidden ? formData.hidden.toString() : '0',
-                  })(
-                    <Radio.Group>
-                      <Radio value="0">显示</Radio>
-                      <Radio value="1">隐藏</Radio>
-                    </Radio.Group>
-                  )}
+                <Form.Item {...formItemLayout} label="备注">
+                  {getFieldDecorator('memo', {
+                    initialValue: formData.memo,
+                  })(<Input placeholder="请输入" />)}
                 </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={24}>
-                <Card title="动作管理" bordered={false}>
+                <Card title="动作(按钮)管理" bordered={false}>
                   {getFieldDecorator('actions', {
                     initialValue: formData.actions,
                   })(<MenuAction />)}
-                </Card>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24}>
-                <Card title="资源管理(服务端路由)" bordered={false}>
-                  {getFieldDecorator('resources', {
-                    initialValue: formData.resources,
-                  })(<MenuResource />)}
                 </Card>
               </Col>
             </Row>

@@ -5,7 +5,7 @@ export default {
 
   state: {
     title: '权限管理脚手架',
-    copyRight: '2019 LyricTian',
+    copyRight: '2020 LyricTian',
     defaultURL: '/dashboard',
     collapsed: false,
     openKeys: [],

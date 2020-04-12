@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge, Select } from 'antd';
+import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import { formatDate } from '@/utils/utils';
@@ -169,39 +169,24 @@ class DemoList extends PureComponent {
       form: { getFieldDecorator },
     } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit} layout="inline">
+      <Form onSubmit={this.onSearchFormSubmit}>
         <Row gutter={16}>
-          <Col md={8} sm={24}>
-            <Form.Item label="编号">
-              {getFieldDecorator('code')(<Input placeholder="请输入" />)}
+          <Col span={8}>
+            <Form.Item>
+              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
             </Form.Item>
           </Col>
-          <Col md={8} sm={24}>
-            <Form.Item label="名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </Form.Item>
-          </Col>
-          <Col md={8} sm={24}>
-            <Form.Item label="状态">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Select.Option value="1">正常</Select.Option>
-                  <Select.Option value="2">停用</Select.Option>
-                </Select>
-              )}
-            </Form.Item>
+          <Col span={8}>
+            <div style={{ overflow: 'hidden', paddingTop: 4 }}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
+                重置
+              </Button>
+            </div>
           </Col>
         </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <span style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.onResetFormClick}>
-              重置
-            </Button>
-          </span>
-        </div>
       </Form>
     );
   }
@@ -261,14 +246,13 @@ class DemoList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              <PButton code="add" icon="plus" type="primary" onClick={() => this.onAddClick()}>
+              <PButton code="add" type="primary" onClick={() => this.onAddClick()}>
                 新建
               </PButton>
               {selectedRows.length === 1 && [
                 <PButton
                   key="edit"
                   code="edit"
-                  icon="edit"
                   onClick={() => this.onItemEditClick(selectedRows[0])}
                 >
                   编辑
@@ -276,7 +260,6 @@ class DemoList extends PureComponent {
                 <PButton
                   key="del"
                   code="del"
-                  icon="delete"
                   type="danger"
                   onClick={() => this.onItemDelClick(selectedRows[0])}
                 >
@@ -286,7 +269,6 @@ class DemoList extends PureComponent {
                   <PButton
                     key="enable"
                     code="enable"
-                    icon="check"
                     onClick={() => this.onItemEnableClick(selectedRows[0])}
                   >
                     启用
@@ -296,7 +278,6 @@ class DemoList extends PureComponent {
                   <PButton
                     key="disable"
                     code="disable"
-                    icon="stop"
                     type="danger"
                     onClick={() => this.onItemDisableClick(selectedRows[0])}
                   >

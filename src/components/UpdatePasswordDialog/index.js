@@ -101,15 +101,15 @@ class UpdatePasswordDialog extends PureComponent {
               ],
             })(<Input type="password" placeholder="请输入新密码" />)}
           </Form.Item>
-          <Form.Item {...formItemLayout} label="确认旧密码">
+          <Form.Item {...formItemLayout} label="确认新密码">
             {getFieldDecorator('confirm_new_password', {
               rules: [
                 {
                   required: true,
-                  message: '请输入确认旧密码',
+                  message: '请输入确认新密码',
                 },
               ],
-            })(<Input type="password" placeholder="请输入确认旧密码" />)}
+            })(<Input type="password" placeholder="请输入确认新密码" />)}
           </Form.Item>
         </Form>
       </Modal>
