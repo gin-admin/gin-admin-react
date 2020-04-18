@@ -248,7 +248,7 @@ class AdminLayout extends React.PureComponent {
     const GlobalContext = GetGlobalContext();
 
     const menu = (
-      <Menu className={classNames('menu')} selectedKeys={[]} onClick={this.onMenuClick}>
+      <Menu className="menu" selectedKeys={[]} onClick={this.onMenuClick}>
         <Menu.Item key="updatepwd">
           <LockOutlined />
           修改密码
@@ -274,9 +274,9 @@ class AdminLayout extends React.PureComponent {
           breakpoint="lg"
           onCollapse={this.onCollapse}
           width={siderWidth}
-          className={classNames('sider')}
+          className="sider"
         >
-          <div className={classNames('logo')}>
+          <div className="logo">
             <Link to="/">
               <img src={logo} alt="logo" />
               <h1>{title}</h1>
@@ -294,7 +294,13 @@ class AdminLayout extends React.PureComponent {
           </Menu>
         </Sider>
         <Layout>
-          <Header className={classNames('header')}>
+          <Header
+            className={classNames('header')}
+            style={{
+              paddingLeft: 12,
+              paddingRight: 12,
+            }}
+          >
             <div className={classNames('foldout')} onClick={() => this.onCollapse()}>
               {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </div>

@@ -1,6 +1,6 @@
 {
   "name": "gin-admin-react",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "RBAC权限管理脚手架",
   "private": true,
   "scripts": {

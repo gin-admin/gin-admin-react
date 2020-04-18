@@ -52,23 +52,34 @@ export default {
             type: 'saveStatus',
             payload: response.status >= 500 ? 'ERROR' : 'FAIL',
           }),
+          put({
+            type: 'changeSubmitting',
+            payload: false,
+          }),
+          put({
+            type: 'loadCaptcha',
+          }),
         ];
-        yield put({
-          type: 'changeSubmitting',
-          payload: false,
-        });
-        yield put({
-          type: 'loadCaptcha',
-        });
         return;
       }
 
       // 保存访问令牌
       store.setAccessToken(response);
-      yield put({
-        type: 'changeSubmitting',
-        payload: false,
-      });
+
+      yield [
+        put({
+          type: 'saveTip',
+          payload: '',
+        }),
+        put({
+          type: 'saveStatus',
+          payload: '',
+        }),
+        put({
+          type: 'changeSubmitting',
+          payload: false,
+        }),
+      ];
 
       const params = parse(window.location.href.split('?')[1]);
       const { redirect } = params;

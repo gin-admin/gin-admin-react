@@ -1,9 +1,7 @@
 @import '~antd/lib/style/themes/default.less';
 
 .header {
-  padding: 0 12px 0 0;
-  background: #002140;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
   position: relative;
 }
 
@@ -11,10 +9,10 @@
   height: 64px;
   position: relative;
   line-height: 64px;
-  padding-left: (@menu-collapsed-width - 32px) / 2;
   transition: all 0.3s;
   background: #002140;
   overflow: hidden;
+  text-align: center;
   img {
     display: inline-block;
     vertical-align: middle;
@@ -38,7 +36,7 @@
   cursor: pointer;
   transition: all 0.3s;
   padding: 0 24px;
-  margin-left: -50px;
+  margin-left: -12px;
   &:hover {
     background: #072f53;
   }
@@ -86,19 +84,12 @@
   }
 }
 
-.menu {
-  :global(.anticon) {
-    margin-right: 8px;
-  }
-}
-
 .sider {
   position: relative;
   z-index: 10;
   min-height: 100vh;
-  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
 }
 
 .content {
-  padding: 24px;
+  padding: 25px 10px;
 }

@@ -69,7 +69,7 @@ class Home extends PureComponent {
       >
         <Card>
           <Alert
-            message="gin-admin 5.2.1 现已发布，欢迎使用 gin-admin-cli 启动体验。"
+            message="gin-admin 6.0.0 现已发布，欢迎使用 gin-admin-cli 启动体验。"
             type="success"
             showIcon
             banner
@@ -100,8 +100,8 @@ class Home extends PureComponent {
           </Typography.Text>
           <CodePreview>cd ~/go/src/gin-admin</CodePreview>
           <CodePreview>
-            go run cmd/server/main.go -c ./configs/config.toml -m ./configs/model.conf -swagger
-            ./docs/swagger -menu ./configs/menu.json
+            go run cmd/gin-admin/main.go web -c ./configs/config.toml -m ./configs/model.conf --menu
+            ./configs/menu.yaml
           </CodePreview>
           <Typography.Text
             strong
