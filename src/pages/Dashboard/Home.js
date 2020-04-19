@@ -69,7 +69,7 @@ class Home extends PureComponent {
       >
         <Card>
           <Alert
-            message="gin-admin 6.0.0 现已发布，欢迎使用 gin-admin-cli 启动体验。"
+            message="gin-admin 6.0.0 现已发布，欢迎使用下载启动体验。"
             type="success"
             showIcon
             banner
@@ -82,26 +82,19 @@ class Home extends PureComponent {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/LyricTian/gin-admin-cli"
-            >
-              1. 基于 gin-admin-cli 构建
-            </a>
-          </Typography.Text>
-          <CodePreview>go get -v github.com/LyricTian/gin-admin-cli</CodePreview>
-          <CodePreview>gin-admin-cli new -m -d ~/go/src/gin-admin -p gin-admin</CodePreview>
-          <Typography.Text strong>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
               href="https://github.com/LyricTian/gin-admin"
             >
-              2. 启动服务
+              1. 下载并启动服务
             </a>
           </Typography.Text>
-          <CodePreview>cd ~/go/src/gin-admin</CodePreview>
+          <CodePreview>go get -v github.com/LyricTian/gin-admin/cmd/gin-admin</CodePreview>
+          <CodePreview>cd $GOPATH/src/github.com/LyricTian/gin-admin</CodePreview>
           <CodePreview>
             go run cmd/gin-admin/main.go web -c ./configs/config.toml -m ./configs/model.conf --menu
             ./configs/menu.yaml
+          </CodePreview>
+          <CodePreview>
+            启动成功之后，可在浏览器中输入地址进行访问：http://127.0.0.1:10088/swagger/index.html
           </CodePreview>
           <Typography.Text
             strong
@@ -114,7 +107,7 @@ class Home extends PureComponent {
               rel="noopener noreferrer"
               href="https://github.com/LyricTian/gin-admin-react"
             >
-              3. 获取并运行 gin-admin-react
+              2. 下载并运行 gin-admin-react
             </a>
           </Typography.Text>
           <CodePreview>git clone https://github.com/LyricTian/gin-admin-react.git</CodePreview>
