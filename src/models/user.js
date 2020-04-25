@@ -94,7 +94,7 @@ export default {
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(userService.get, payload);
+      const response = yield call(userService.get, payload.record_id);
       yield put({
         type: 'saveFormData',
         payload: response,
@@ -110,8 +110,8 @@ export default {
       const formType = yield select(state => state.user.formType);
       let success = false;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.user.formID);
-        const response = yield call(userService.update, params);
+        const id = yield select(state => state.user.formID);
+        const response = yield call(userService.update, id, params);
         if (response.status === 'OK') {
           success = true;
         }
@@ -139,7 +139,7 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(userService.del, payload);
+      const response = yield call(userService.del, payload.record_id);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
@@ -148,9 +148,9 @@ export default {
     *changeStatus({ payload }, { call, put, select }) {
       let response;
       if (payload.status === 1) {
-        response = yield call(userService.enable, payload);
+        response = yield call(userService.enable, payload.record_id);
       } else {
-        response = yield call(userService.disable, payload);
+        response = yield call(userService.disable, payload.record_id);
       }
 
       if (response.status === 'OK') {

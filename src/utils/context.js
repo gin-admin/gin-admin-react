@@ -1,10 +1,8 @@
 import React from 'react';
 
-let GlobalContext;
+// 创建全局上下文
+const GlobalContext = React.createContext({});
 
-export default function GetGlobalContext() {
-  if (!GlobalContext) {
-    GlobalContext = React.createContext();
-  }
-  return GlobalContext;
-}
+export default {
+  GlobalContext,
+};

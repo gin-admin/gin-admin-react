@@ -1,22 +1,32 @@
-const accessTokenKey = 'access_token';
+export const storeKeys = {
+  AccessToken: 'Access-Token',
+};
 
-export default class store {
-  // 设定访问令牌
-  static setAccessToken(token) {
-    sessionStorage.setItem(accessTokenKey, JSON.stringify(token));
-  }
+export const storeType = {
+  localStorage,
+  sessionStorage,
+};
 
-  // 获取访问令牌
-  static getAccessToken() {
-    const token = sessionStorage.getItem(accessTokenKey);
-    if (!token || token === '') {
-      return null;
-    }
-    return JSON.parse(token);
-  }
+const defaultStorage = storeType.localStorage;
 
-  // 清空访问令牌
-  static clearAccessToken() {
-    sessionStorage.removeItem(accessTokenKey);
-  }
+function set(key, value, ...options) {
+  const storage = options.storeType || defaultStorage;
+  storage.setItem(key, JSON.stringify(value));
 }
+
+function get(key, ...options) {
+  const storage = options.storeType || defaultStorage;
+  const value = storage.getItem(key);
+  return value ? JSON.parse(value) : null;
+}
+
+function remove(key, ...options) {
+  const storage = options.storeType || defaultStorage;
+  storage.removeItem(key);
+}
+
+export default {
+  set,
+  get,
+  remove,
+};

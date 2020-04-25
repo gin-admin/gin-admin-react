@@ -1,6 +1,6 @@
 import { history } from 'umi';
-import { stringify, parse } from 'qs';
-import store from '@/utils/store';
+import { parse } from 'qs';
+import { setToken, logout } from '@/utils/request';
 import * as loginService from '@/services/login';
 
 export default {
@@ -41,8 +41,13 @@ export default {
         payload: true,
       });
       const response = yield call(loginService.login, payload);
-      if (response.error) {
-        const { message } = response.error;
+      if (response.data && response.data.error) {
+        const {
+          data: {
+            error: { message },
+          },
+          status,
+        } = response;
         yield [
           put({
             type: 'saveTip',
@@ -50,7 +55,7 @@ export default {
           }),
           put({
             type: 'saveStatus',
-            payload: response.status >= 500 ? 'ERROR' : 'FAIL',
+            payload: status >= 500 ? 'ERROR' : 'FAIL',
           }),
           put({
             type: 'changeSubmitting',
@@ -64,7 +69,7 @@ export default {
       }
 
       // 保存访问令牌
-      store.setAccessToken(response);
+      setToken(response);
 
       yield [
         put({
@@ -92,13 +97,8 @@ export default {
     *logout(_, { call }) {
       const response = yield call(loginService.logout);
       if (response.status === 'OK') {
-        history.push('/user/login', {
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
+        logout();
       }
-      store.clearAccessToken();
     },
   },
 

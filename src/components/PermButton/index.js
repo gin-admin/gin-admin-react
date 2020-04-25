@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button } from 'antd';
-import GetGlobalContext from '@/utils/context';
+import context from '@/utils/context';
 
 export default ({ code, children, ...rest }) => {
-  const GlobalContext = GetGlobalContext();
+  const { GlobalContext } = context;
+
   return (
     <GlobalContext.Consumer>
       {global => {

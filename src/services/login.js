@@ -1,4 +1,4 @@
-import request, { baseURL } from '../utils/request';
+import request, { methods, baseURL } from '@/utils/request';
 
 // 验证码ID
 export async function captchaID() {
@@ -10,36 +10,31 @@ export function captcha(id) {
   return `${baseURL}/v1/pub/login/captcha?id=${id}`;
 }
 
-// 登录
-export async function login(params) {
+export async function login(data) {
   return request(`/v1/pub/login`, {
-    method: 'POST',
-    body: params,
-    notNotify: true,
+    method: methods.POST,
+    data,
+    hideNotify: true,
   });
 }
 
-// 退出
 export async function logout() {
   return request(`/v1/pub/login/exit`, {
-    method: 'POST',
+    method: methods.POST,
   });
 }
 
-// 更新个人密码
-export async function updatePwd(params) {
+export async function updatePwd(data) {
   return request(`/v1/pub/current/password`, {
-    method: 'PUT',
-    body: params,
+    method: methods.PUT,
+    data,
   });
 }
 
-// 获取当前用户信息
 export async function getCurrentUser() {
   return request(`/v1/pub/current/user`);
 }
 
-// 查询当前用户菜单树
 export async function queryMenuTree() {
   return request(`/v1/pub/current/menutree`);
 }

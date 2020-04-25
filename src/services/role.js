@@ -1,48 +1,50 @@
-import { stringify } from 'qs';
-import request from '../utils/request';
+import request, { methods } from '@/utils/request';
 
 const router = 'roles';
 
 export async function query(params) {
-  return request(`/v1/${router}?${stringify(params)}`);
+  return request(`/v1/${router}`, { params });
 }
 
-export async function querySelect(params) {
-  return request(`/v1/${router}.select?${stringify(params)}`);
+export async function querySelect(params = {}) {
+  return request(`/v1/${router}.select`, { params });
 }
 
-export async function get(params) {
-  return request(`/v1/${router}/${params.record_id}`);
+export async function get(id, params = {}) {
+  return request(`/v1/${router}/${id}`, { params });
 }
 
-export async function create(params) {
+export async function create(data) {
   return request(`/v1/${router}`, {
-    method: 'POST',
-    body: params,
+    method: methods.POST,
+    data,
   });
 }
 
-export async function update(params) {
-  return request(`/v1/${router}/${params.record_id}`, {
-    method: 'PUT',
-    body: params,
+export async function update(id, data) {
+  return request(`/v1/${router}/${id}`, {
+    method: methods.PUT,
+    data,
   });
 }
 
-export async function del(params) {
-  return request(`/v1/${router}/${params.record_id}`, {
-    method: 'DELETE',
+export async function del(id, params = {}) {
+  return request(`/v1/${router}/${id}`, {
+    method: methods.DELETE,
+    params,
   });
 }
 
-export async function enable(params) {
-  return request(`/v1/${router}/${params.record_id}/enable`, {
-    method: 'PATCH',
+export async function enable(id, params = {}) {
+  return request(`/v1/${router}/${id}/enable`, {
+    method: methods.PATCH,
+    params,
   });
 }
 
-export async function disable(params) {
-  return request(`/v1/${router}/${params.record_id}/disable`, {
-    method: 'PATCH',
+export async function disable(id, params = {}) {
+  return request(`/v1/${router}/${id}/disable`, {
+    method: methods.PATCH,
+    params,
   });
 }

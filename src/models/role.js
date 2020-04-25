@@ -96,7 +96,7 @@ export default {
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(roleService.get, payload);
+      const response = yield call(roleService.get, payload.record_id);
 
       const { role_menus: roleMenus } = response;
       if (roleMenus) {
@@ -133,8 +133,8 @@ export default {
 
       let success = false;
       if (formType === 'E') {
-        params.record_id = yield select(state => state.role.formID);
-        const response = yield call(roleService.update, params);
+        const id = yield select(state => state.role.formID);
+        const response = yield call(roleService.update, id, params);
         if (response.status === 'OK') {
           success = true;
         }
@@ -162,7 +162,7 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(roleService.del, payload);
+      const response = yield call(roleService.del, payload.record_id);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
@@ -178,9 +178,9 @@ export default {
     *changeStatus({ payload }, { call, put, select }) {
       let response;
       if (payload.status === 1) {
-        response = yield call(roleService.enable, payload);
+        response = yield call(roleService.enable, payload.record_id);
       } else {
-        response = yield call(roleService.disable, payload);
+        response = yield call(roleService.disable, payload.record_id);
       }
 
       if (response.status === 'OK') {

@@ -18,7 +18,7 @@ import Debounce from 'lodash-decorators/debounce';
 import GlobalFooter from '@/components/GlobalFooter';
 import CopyRight from '@/components/CopyRight';
 import UpdatePasswordDialog from '@/components/UpdatePasswordDialog';
-import GetGlobalContext from '@/utils/context';
+import context from '@/utils/context';
 import './AdminLayout.less';
 import logo from '../assets/logo.svg';
 
@@ -245,7 +245,6 @@ class AdminLayout extends React.PureComponent {
     } = this.props;
 
     const { updatePwdVisible } = this.state;
-    const GlobalContext = GetGlobalContext();
 
     const menu = (
       <Menu className="menu" selectedKeys={[]} onClick={this.onMenuClick}>
@@ -321,7 +320,9 @@ class AdminLayout extends React.PureComponent {
           </Header>
           <Content className={classNames('content')}>
             <div style={{ minHeight: 'calc(100vh - 150px)' }}>
-              <GlobalContext.Provider value={global}>{children}</GlobalContext.Provider>
+              <context.GlobalContext.Provider value={global}>
+                {children}
+              </context.GlobalContext.Provider>
             </div>
             <GlobalFooter copyright={<CopyRight title={copyRight} />} />
           </Content>

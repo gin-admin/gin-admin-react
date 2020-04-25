@@ -1,54 +1,60 @@
 import axios from 'axios';
-import { stringify } from 'querystring';
-import { history } from 'umi';
-import { notification } from 'antd';
 import moment from 'moment';
-import store from './store';
-import { getPageQuery } from './utils';
+import { history } from 'umi';
+import { stringify, parse } from 'qs';
+import { notification } from 'antd';
+import store, { storeKeys } from './store';
+
+let refreshTimeout;
+let lastAccessTime;
 
 export const baseURL = '/api';
 
-function checkAccessTokenExpires(expiresAt) {
-  const now = moment().unix();
-  if (expiresAt - now <= 0) {
-    return -1;
-  }
-  if (expiresAt - now <= 600) {
-    return 0;
-  }
-  return 1;
-}
+export const contentType = {
+  form: 'application/x-www-form-urlencoded',
+  json: 'application/json',
+};
 
-async function getAccessToken() {
-  const tokenInfo = store.getAccessToken();
-  if (!tokenInfo) {
+export const headerKeys = {
+  ContentType: 'Content-Type',
+  Authorization: 'Authorization',
+};
+
+export const methods = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  PATCH: 'PATCH',
+  HEAD: 'HEAD',
+  OPTIONS: 'OPTIONS',
+};
+
+// 获取访问令牌
+export function getAccessToken() {
+  const token = store.get(storeKeys.AccessToken);
+  if (!token) {
     return '';
   }
-
-  if (checkAccessTokenExpires(tokenInfo.expires_at) === 0) {
-    return axios
-      .request({
-        url: `${baseURL}/v1/pub/refresh-token`,
-        method: 'POST',
-        headers: {
-          Authorization: `${tokenInfo.token_type} ${tokenInfo.access_token}`,
-        },
-      })
-      .then(response => {
-        const { status, data } = response;
-        if (status === 200) {
-          store.setAccessToken(data);
-          return `${data.token_type} ${data.access_token}`;
-        }
-        return '';
-      });
-  }
-  return `${tokenInfo.token_type} ${tokenInfo.access_token}`;
+  return token.access_token;
 }
 
-function logout() {
-  const { redirect } = getPageQuery(); // Note: There may be security issues, please note
+// 包装带有令牌的URL
+export function wrapURLWithToken(url) {
+  const ss = url.split('?');
+  const query = parse(ss[1]);
+  query.accessToken = getAccessToken();
+  return `${ss[0]}?${stringify(query)}`;
+}
 
+// 登出
+export function logout() {
+  if (refreshTimeout) {
+    clearTimeout(refreshTimeout);
+  }
+
+  store.remove(storeKeys.AccessToken);
+  const { redirect } = parse(window.location.href.split('?')[1]);
   if (window.location.pathname !== '/user/login' && !redirect) {
     history.replace({
       pathname: '/user/login',
@@ -59,68 +65,124 @@ function logout() {
   }
 }
 
-export default async function request(url, options) {
+// request 拦截器
+function requestInterceptors(c) {
+  const config = { ...c };
+  const token = store.get(storeKeys.AccessToken);
+  if (token) {
+    config.headers[headerKeys.Authorization] = `${token.token_type} ${token.access_token}`;
+  }
+  return config;
+}
+
+// ajax请求
+export default function request(url, options = {}) {
+  const oldToken = store.get(storeKeys.AccessToken);
+  if (oldToken && oldToken.expires_at - lastAccessTime <= 0) {
+    if (refreshTimeout) {
+      clearTimeout(refreshTimeout);
+    }
+    logout();
+    // eslint-disable-next-line compat/compat
+    return Promise.reject(new Error('The token has expired'));
+  }
+  lastAccessTime = moment().unix();
+
+  const opts = { ...options };
   let showNotify = true;
-  const opts = {
-    baseURL,
-    url,
-    validateStatus() {
-      return true;
-    },
-    ...options,
-  };
-  if (opts.notNotify) {
+  if (opts.hideNotify) {
     showNotify = false;
+    delete opts.hideNotify;
   }
 
-  const defaultHeader = {
-    Authorization: await getAccessToken(),
-  };
-  if (opts.method === 'POST' || opts.method === 'PUT') {
-    defaultHeader['Content-Type'] = 'application/json; charset=utf-8';
-    opts.data = opts.body;
-  }
-  opts.headers = { ...defaultHeader, ...opts.headers };
-
-  return axios.request(opts).then(response => {
-    const { status, data } = response;
-    if (status >= 200 && status < 300) {
-      return data;
-    }
-
-    if (status === 401) {
-      const {
-        error: { code },
-      } = data;
-      if (code === 9999) {
-        logout();
-        return {};
+  const config = {
+    method: methods.GET,
+    baseURL,
+    headers: {},
+    transformRequest: (data, headers) => {
+      switch (headers[headerKeys.ContentType]) {
+        case contentType.json:
+          return JSON.stringify(data);
+        case contentType.form:
+          return stringify(data);
+        default:
+          return data;
       }
-    }
+    },
+    paramsSerializer: params => {
+      return stringify(params);
+    },
+    timeout: 60000,
+    ...opts,
+  };
 
-    const error = {
-      code: 0,
-      message: '服务器发生错误',
-    };
-    if (status === 504) {
-      error.message = '未连接到服务器';
-    } else if (data) {
-      const {
-        error: { message, code },
-      } = data;
-      error.message = message;
-      error.code = code;
-    } else if (status >= 400 && status < 500) {
-      error.message = '请求发生错误';
-    }
+  if (
+    !(config.headers && config.headers[headerKeys.ContentType]) &&
+    [methods.POST, methods.PUT, methods.PATCH].indexOf(config.method) > -1
+  ) {
+    config.headers[headerKeys.ContentType] = contentType.json;
+  }
 
-    if (showNotify) {
-      notification.error({
-        message: `${opts.baseURL}${opts.url}`,
-        description: error.message,
+  const instance = axios.create(config);
+  instance.interceptors.request.use(requestInterceptors);
+
+  return instance
+    .request({ url })
+    .then(res => {
+      const { data } = res;
+      return data;
+    })
+    .catch(error => {
+      const { response } = error;
+      const { status, data } = response;
+
+      if (status === 401 && data.error && data.error.code === 9999) {
+        logout();
+        return response;
+      }
+
+      if (showNotify) {
+        let msg = '请求发生错误';
+        if (status === 504) {
+          msg = '未连接到服务器';
+        } else if (data && data.error) {
+          msg = data.error.message;
+        }
+
+        notification.error({
+          message: `${config.baseURL}${url}`,
+          description: msg,
+        });
+      }
+      return response;
+    });
+}
+
+// 放入访问令牌
+export function setToken(token) {
+  lastAccessTime = token.expires_at;
+  store.set(storeKeys.AccessToken, token);
+  if (refreshTimeout) {
+    clearTimeout(refreshTimeout);
+  }
+
+  // 提前10分钟更新令牌
+  const timeout = token.expires_at - moment().unix() - 10;
+  if (timeout > 0) {
+    refreshTimeout = setTimeout(() => {
+      const oldToken = store.get(storeKeys.AccessToken);
+      if (oldToken && oldToken.expires_at - lastAccessTime <= 0) {
+        if (refreshTimeout) {
+          clearTimeout(refreshTimeout);
+        }
+        return;
+      }
+
+      request('/v1/pub/refresh-token', {
+        method: methods.POST,
+      }).then(res => {
+        setToken(res);
       });
-    }
-
-    return { error, status };
-  });
+    }, timeout * 1000);
+  }
 }
