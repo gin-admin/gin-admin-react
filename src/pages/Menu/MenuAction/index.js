@@ -67,7 +67,7 @@ export default class MenuAction extends PureComponent {
       }
     }
     if (!exists) {
-      data.push({ key: formData.code, record_id: newUUID(), ...formData });
+      data.push({ key: formData.code, ...formData });
     }
     this.setState({ dataSource: data, formVisible: false }, () => {
       this.triggerChange(data);
@@ -101,6 +101,11 @@ export default class MenuAction extends PureComponent {
         resources: [{ method: 'DELETE', path: `${path}/:id` }],
       },
       {
+        code: 'view',
+        name: '查看',
+        resources: [{ method: 'GET', path: `${path}/:id` }],
+      },
+      {
         code: 'query',
         name: '查询',
         resources: [{ method: 'GET', path }],
@@ -117,7 +122,7 @@ export default class MenuAction extends PureComponent {
     }, {});
     for (let i = 0; i < newData.length; i += 1) {
       if (!mDataSource[newData[i].key]) {
-        data.push({ record_id: newUUID(), ...newData[i] });
+        data.push({ ...newData[i] });
       }
     }
 
