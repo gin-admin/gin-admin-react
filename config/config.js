@@ -15,9 +15,7 @@ export default {
     default: 'zh-CN',
     antd: true,
   },
-  dynamicImport: {
-    loading: '@/components/PageLoading/index',
-  },
+  dynamicImport: false,
   // 路由配置
   routes: pageRoutes,
   hash: true,
