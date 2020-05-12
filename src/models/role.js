@@ -90,13 +90,13 @@ export default {
           }),
           put({
             type: 'fetchForm',
-            payload: { record_id: payload.id },
+            payload: { id: payload.id },
           }),
         ];
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(roleService.get, payload.record_id);
+      const response = yield call(roleService.get, payload.id);
 
       const { role_menus: roleMenus } = response;
       if (roleMenus) {
@@ -140,7 +140,7 @@ export default {
         }
       } else {
         const response = yield call(roleService.create, params);
-        if (response.record_id && response.record_id !== '') {
+        if (response.id && response.id !== '') {
           success = true;
         }
       }
@@ -162,7 +162,7 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(roleService.del, payload.record_id);
+      const response = yield call(roleService.del, payload.id);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
@@ -178,9 +178,9 @@ export default {
     *changeStatus({ payload }, { call, put, select }) {
       let response;
       if (payload.status === 1) {
-        response = yield call(roleService.enable, payload.record_id);
+        response = yield call(roleService.enable, payload.id);
       } else {
-        response = yield call(roleService.disable, payload.record_id);
+        response = yield call(roleService.disable, payload.id);
       }
 
       if (response.status === 'OK') {
@@ -194,7 +194,7 @@ export default {
 
         for (let i = 0; i < data.list.length; i += 1) {
           const item = data.list[i];
-          if (item.record_id === payload.record_id) {
+          if (item.id === payload.id) {
             item.status = payload.status;
           }
           newData.list.push(item);

@@ -36,14 +36,14 @@ class MenuList extends PureComponent {
   onItemDisableClick = item => {
     this.dispatch({
       type: 'menu/changeStatus',
-      payload: { record_id: item.record_id, status: 2 },
+      payload: { id: item.id, status: 2 },
     });
   };
 
   onItemEnableClick = item => {
     this.dispatch({
       type: 'menu/changeStatus',
-      payload: { record_id: item.record_id, status: 1 },
+      payload: { id: item.id, status: 1 },
     });
   };
 
@@ -57,7 +57,7 @@ class MenuList extends PureComponent {
       type: 'menu/loadForm',
       payload: {
         type: 'E',
-        id: item.record_id,
+        id: item.id,
       },
     });
   };
@@ -82,7 +82,7 @@ class MenuList extends PureComponent {
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
-      onOk: this.handleDelOKClick.bind(this, item.record_id),
+      onOk: this.handleDelOKClick.bind(this, item.id),
     });
   };
 
@@ -90,7 +90,7 @@ class MenuList extends PureComponent {
     const keys = [];
     const rows = [];
     if (selected) {
-      keys.push(record.record_id);
+      keys.push(record.id);
       rows.push(record);
     }
     this.setState({
@@ -182,7 +182,7 @@ class MenuList extends PureComponent {
   handleDelOKClick(id) {
     this.dispatch({
       type: 'menu/del',
-      payload: { record_id: id },
+      payload: { id },
     });
     this.clearSelectRows();
   }
@@ -195,12 +195,12 @@ class MenuList extends PureComponent {
     data.map(item => {
       if (item.children) {
         return (
-          <Tree.TreeNode title={item.name} key={item.record_id} dataRef={item}>
+          <Tree.TreeNode title={item.name} key={item.id} dataRef={item}>
             {this.renderTreeNodes(item.children)}
           </Tree.TreeNode>
         );
       }
-      return <Tree.TreeNode title={item.name} key={item.record_id} dataRef={item} />;
+      return <Tree.TreeNode title={item.name} key={item.id} dataRef={item} />;
     });
 
   renderSearchForm() {
@@ -282,7 +282,7 @@ class MenuList extends PureComponent {
       },
       {
         title: '创建时间',
-        width: 100,
+        width: 150,
         dataIndex: 'created_at',
         render: val => <span>{formatDate(val, 'YYYY-MM-DD')}</span>,
       },
@@ -395,7 +395,7 @@ class MenuList extends PureComponent {
                     onSelect: this.handleTableSelectRow,
                   }}
                   loading={loading}
-                  rowKey={record => record.record_id}
+                  rowKey={record => record.id}
                   dataSource={list}
                   columns={columns}
                   pagination={paginationProps}

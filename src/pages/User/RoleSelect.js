@@ -57,7 +57,7 @@ export default class RoleSelect extends PureComponent {
         style={{ width: '100%' }}
       >
         {data.map(item => (
-          <Select.Option key={item.record_id} value={item.record_id}>
+          <Select.Option key={item.id} value={item.id}>
             {item.name}
           </Select.Option>
         ))}

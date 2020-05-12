@@ -32,14 +32,14 @@ class RoleList extends PureComponent {
   onItemDisableClick = item => {
     this.dispatch({
       type: 'role/changeStatus',
-      payload: { record_id: item.record_id, status: 2 },
+      payload: { id: item.id, status: 2 },
     });
   };
 
   onItemEnableClick = item => {
     this.dispatch({
       type: 'role/changeStatus',
-      payload: { record_id: item.record_id, status: 1 },
+      payload: { id: item.id, status: 1 },
     });
   };
 
@@ -70,7 +70,7 @@ class RoleList extends PureComponent {
       type: 'role/loadForm',
       payload: {
         type: 'E',
-        id: item.record_id,
+        id: item.id,
       },
     });
   };
@@ -81,7 +81,7 @@ class RoleList extends PureComponent {
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
-      onOk: this.handleDelOKClick.bind(this, item.record_id),
+      onOk: this.handleDelOKClick.bind(this, item.id),
     });
   };
 
@@ -89,7 +89,7 @@ class RoleList extends PureComponent {
     const keys = [];
     const rows = [];
     if (selected) {
-      keys.push(record.record_id);
+      keys.push(record.id);
       rows.push(record);
     }
     this.setState({
@@ -157,7 +157,7 @@ class RoleList extends PureComponent {
   handleDelOKClick(id) {
     this.dispatch({
       type: 'role/del',
-      payload: { record_id: id },
+      payload: { id },
     });
     this.clearSelectRows();
   }
@@ -208,17 +208,14 @@ class RoleList extends PureComponent {
       {
         title: '角色名称',
         dataIndex: 'name',
-        width: 200,
       },
       {
         title: '排序值',
         dataIndex: 'sequence',
-        width: 100,
       },
       {
         title: '状态',
         dataIndex: 'status',
-        width: 80,
         render: val => {
           if (val === 1) {
             return <Badge status="success" text="启用" />;
@@ -228,7 +225,6 @@ class RoleList extends PureComponent {
       },
       {
         title: '创建时间',
-        width: 100,
         dataIndex: 'created_at',
         render: val => <span>{formatDate(val, 'YYYY-MM-DD')}</span>,
       },
@@ -300,7 +296,7 @@ class RoleList extends PureComponent {
                   onSelect: this.handleTableSelectRow,
                 }}
                 loading={loading}
-                rowKey={record => record.record_id}
+                rowKey={record => record.id}
                 dataSource={list}
                 columns={columns}
                 pagination={paginationProps}

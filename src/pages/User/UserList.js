@@ -33,14 +33,14 @@ class UserList extends PureComponent {
   onItemDisableClick = item => {
     this.dispatch({
       type: 'user/changeStatus',
-      payload: { record_id: item.record_id, status: 2 },
+      payload: { id: item.id, status: 2 },
     });
   };
 
   onItemEnableClick = item => {
     this.dispatch({
       type: 'user/changeStatus',
-      payload: { record_id: item.record_id, status: 1 },
+      payload: { id: item.id, status: 1 },
     });
   };
 
@@ -49,7 +49,7 @@ class UserList extends PureComponent {
       type: 'user/loadForm',
       payload: {
         type: 'E',
-        id: item.record_id,
+        id: item.id,
       },
     });
   };
@@ -66,7 +66,7 @@ class UserList extends PureComponent {
   onDelOKClick(id) {
     this.dispatch({
       type: 'user/del',
-      payload: { record_id: id },
+      payload: { id },
     });
     this.clearSelectRows();
   }
@@ -85,7 +85,7 @@ class UserList extends PureComponent {
       okText: '确认',
       okType: 'danger',
       cancelText: '取消',
-      onOk: this.onDelOKClick.bind(this, item.record_id),
+      onOk: this.onDelOKClick.bind(this, item.id),
     });
   };
 
@@ -93,7 +93,7 @@ class UserList extends PureComponent {
     const keys = [];
     const rows = [];
     if (selected) {
-      keys.push(record.record_id);
+      keys.push(record.id);
       rows.push(record);
     }
     this.setState({
@@ -317,7 +317,7 @@ class UserList extends PureComponent {
                   onSelect: this.handleTableSelectRow,
                 }}
                 loading={loading}
-                rowKey={record => record.record_id}
+                rowKey={record => record.id}
                 dataSource={list}
                 columns={columns}
                 pagination={paginationProps}

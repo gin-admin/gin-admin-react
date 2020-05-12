@@ -89,13 +89,13 @@ export default {
           }),
           put({
             type: 'fetchForm',
-            payload: { record_id: payload.id },
+            payload: { id: payload.id },
           }),
         ];
       }
     },
     *fetchForm({ payload }, { call, put }) {
-      const response = yield call(demoService.get, payload.record_id);
+      const response = yield call(demoService.get, payload.id);
       yield [
         put({
           type: 'saveFormData',
@@ -120,7 +120,7 @@ export default {
         }
       } else {
         const response = yield call(demoService.create, params);
-        if (response.record_id && response.record_id !== '') {
+        if (response.id && response.id !== '') {
           success = true;
         }
       }
@@ -142,7 +142,7 @@ export default {
       }
     },
     *del({ payload }, { call, put }) {
-      const response = yield call(demoService.del, payload.record_id);
+      const response = yield call(demoService.del, payload.id);
       if (response.status === 'OK') {
         message.success('删除成功');
         yield put({ type: 'fetch' });
@@ -151,9 +151,9 @@ export default {
     *changeStatus({ payload }, { call, put, select }) {
       let response;
       if (payload.status === 1) {
-        response = yield call(demoService.enable, payload.record_id);
+        response = yield call(demoService.enable, payload.id);
       } else {
-        response = yield call(demoService.disable, payload.record_id);
+        response = yield call(demoService.disable, payload.id);
       }
 
       if (response.status === 'OK') {
@@ -167,7 +167,7 @@ export default {
 
         for (let i = 0; i < data.list.length; i += 1) {
           const item = data.list[i];
-          if (item.record_id === payload.record_id) {
+          if (item.id === payload.id) {
             item.status = payload.status;
           }
           newData.list.push(item);

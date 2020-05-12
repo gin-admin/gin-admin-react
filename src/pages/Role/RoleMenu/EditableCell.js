@@ -5,7 +5,7 @@ export default class EditableCell extends PureComponent {
   findItem = () => {
     const { data, record } = this.props;
     for (let i = 0; i < data.length; i += 1) {
-      if (data[i].menu_id === record.record_id) {
+      if (data[i].menu_id === record.id) {
         return data[i];
       }
     }
@@ -32,8 +32,8 @@ export default class EditableCell extends PureComponent {
       >
         <Row>
           {record.actions.map(v => (
-            <Col key={v.record_id}>
-              <Checkbox value={v.record_id}>{v.name}</Checkbox>
+            <Col key={v.id}>
+              <Checkbox value={v.id}>{v.name}</Checkbox>
             </Col>
           ))}
         </Row>

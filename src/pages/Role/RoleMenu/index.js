@@ -59,11 +59,11 @@ export default class RoleMenu extends PureComponent {
   handleSave = (record, dataIndex, values) => {
     const { dataSource } = this.state;
     const data = [...dataSource];
-    const index = data.findIndex(item => item.menu_id === record.record_id);
+    const index = data.findIndex(item => item.menu_id === record.id);
     let item = data[index];
     if (!item) {
       item = {
-        menu_id: record.record_id,
+        menu_id: record.id,
         dataIndex: values,
       };
     } else {
@@ -101,7 +101,7 @@ export default class RoleMenu extends PureComponent {
     for (let i = 0; i < addData.length; i += 1) {
       let exists = false;
       for (let j = 0; j < list.length; j += 1) {
-        if (list[j].menu_id === addData[i].record_id) {
+        if (list[j].menu_id === addData[i].id) {
           exists = true;
           break;
         }
@@ -109,8 +109,8 @@ export default class RoleMenu extends PureComponent {
 
       if (!exists) {
         const item = {
-          menu_id: addData[i].record_id,
-          actions: addData[i].actions ? addData[i].actions.map(v => v.record_id) : [],
+          menu_id: addData[i].id,
+          actions: addData[i].actions ? addData[i].actions.map(v => v.id) : [],
         };
         list.push(item);
       }
@@ -124,7 +124,7 @@ export default class RoleMenu extends PureComponent {
     for (let i = 0; i < data.length; i += 1) {
       let exists = false;
       for (let j = 0; j < selectedRows.length; j += 1) {
-        if (data[i].menu_id === selectedRows[j].record_id) {
+        if (data[i].menu_id === selectedRows[j].id) {
           exists = true;
           break;
         }
@@ -160,8 +160,8 @@ export default class RoleMenu extends PureComponent {
     if (selected) {
       list = selectRows.map(vv => {
         const item = {
-          menu_id: vv.record_id,
-          actions: vv.actions ? vv.actions.map(v => v.record_id) : [],
+          menu_id: vv.id,
+          actions: vv.actions ? vv.actions.map(v => v.id) : [],
         };
         return item;
       });
@@ -203,7 +203,7 @@ export default class RoleMenu extends PureComponent {
             onSelect: this.handleSelectedRow,
             onSelectAll: this.handleSelectAll,
           }}
-          rowKey={record => record.record_id}
+          rowKey={record => record.id}
           components={components}
           dataSource={menuData}
           columns={columns}

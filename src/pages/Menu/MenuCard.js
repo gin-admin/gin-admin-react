@@ -35,7 +35,7 @@ class MenuCard extends PureComponent {
     }
     const newData = [];
     for (let i = 0; i < data.length; i += 1) {
-      const item = { ...data[i], title: data[i].name, value: data[i].record_id };
+      const item = { ...data[i], title: data[i].name, value: data[i].id };
       if (item.children && item.children.length > 0) {
         item.children = this.toTreeSelect(item.children);
       }

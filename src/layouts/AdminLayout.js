@@ -117,7 +117,7 @@ class AdminLayout extends React.PureComponent {
       let isParent = false;
       for (let i = 0; i < openKeys.length - 1; i += 1) {
         const item = menuMap[openKeys[i]] || {};
-        let path = item.record_id;
+        let path = item.id;
         if (item.parent_path !== '') {
           path = `${item.parent_path}/${path}`;
         }
@@ -185,7 +185,7 @@ class AdminLayout extends React.PureComponent {
                 item.name
               )
             }
-            key={item.record_id}
+            key={item.id}
           >
             {this.renderNavMenuItems(item.children)}
           </SubMenu>
@@ -199,7 +199,7 @@ class AdminLayout extends React.PureComponent {
       } = this.props;
 
       return (
-        <Menu.Item key={item.record_id}>
+        <Menu.Item key={item.id}>
           {router.startsWith('http') ? (
             <a href={router} target="_blank" rel="noopener noreferrer">
               {icon}

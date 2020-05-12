@@ -42,7 +42,7 @@ export default {
 
       yield put({
         type: 'changeSelectedKeys',
-        payload: [item.record_id],
+        payload: [item.id],
       });
     },
     *fetchUser(_, { call, put }) {
@@ -65,7 +65,7 @@ export default {
       const menuMap = {};
       function fillData(data) {
         for (let i = 0; i < data.length; i += 1) {
-          menuMap[data[i].record_id] = data[i];
+          menuMap[data[i].id] = data[i];
           if (data[i].router !== '') {
             menuPaths[data[i].router] = data[i];
           }
