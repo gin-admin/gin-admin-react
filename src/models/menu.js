@@ -21,7 +21,9 @@ export default {
   },
   effects: {
     *fetch({ search, pagination }, { call, put, select }) {
-      let params = {};
+      let params = {
+        parentID: '',
+      };
 
       if (search) {
         params = { ...params, ...search };
