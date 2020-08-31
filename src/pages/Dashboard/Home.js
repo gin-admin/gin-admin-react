@@ -87,8 +87,8 @@ class Home extends PureComponent {
               1. 下载并启动服务
             </a>
           </Typography.Text>
-          <CodePreview>go get -v github.com/LyricTian/gin-admin/cmd/gin-admin</CodePreview>
-          <CodePreview>cd $GOPATH/src/github.com/LyricTian/gin-admin</CodePreview>
+          <CodePreview>git clone https://github.com/LyricTian/gin-admin.git</CodePreview>
+          <CodePreview>cd gin-admin</CodePreview>
           <CodePreview>
             go run cmd/gin-admin/main.go web -c ./configs/config.toml -m ./configs/model.conf --menu
             ./configs/menu.yaml
@@ -110,7 +110,7 @@ class Home extends PureComponent {
               2. 下载并运行 gin-admin-react
             </a>
           </Typography.Text>
-          <CodePreview>git clone https://github.com/LyricTian/gin-admin-react.git</CodePreview>
+          <CodePreview>git clone https://github.com/gin-admin/gin-admin-react.git</CodePreview>
           <CodePreview>cd gin-admin-react</CodePreview>
           <CodePreview>yarn</CodePreview>
           <CodePreview>yarn start</CodePreview>
