@@ -75,8 +75,14 @@ function requestInterceptors(c) {
   return config;
 }
 
+const instance = axios.create({
+  baseURL,
+  timeout: 10000,
+});
+instance.interceptors.request.use(requestInterceptors);
+
 // ajax请求
-export default function request(url, options = {}) {
+export default function request(url, options = { method: methods.GET }) {
   const oldToken = store.get(storeKeys.AccessToken);
   if (oldToken && oldToken.expires_at - lastAccessTime <= 0) {
     if (refreshTimeout) {
@@ -96,23 +102,11 @@ export default function request(url, options = {}) {
   }
 
   const config = {
-    method: methods.GET,
-    baseURL,
+    method: opts.method,
     headers: {},
-    transformRequest: (data, headers) => {
-      switch (headers[headerKeys.ContentType]) {
-        case contentType.json:
-          return JSON.stringify(data);
-        case contentType.form:
-          return stringify(data);
-        default:
-          return data;
-      }
-    },
     paramsSerializer: params => {
       return stringify(params);
     },
-    timeout: 60000,
     ...opts,
   };
 
@@ -123,11 +117,8 @@ export default function request(url, options = {}) {
     config.headers[headerKeys.ContentType] = contentType.json;
   }
 
-  const instance = axios.create(config);
-  instance.interceptors.request.use(requestInterceptors);
-
   return instance
-    .request({ url })
+    .request({ url, ...config })
     .then(res => {
       const { data } = res;
       return data;
