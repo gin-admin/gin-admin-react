@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Layout, Tree, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Layout, Tree, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import { formatDate } from '@/utils/utils';
@@ -13,8 +12,9 @@ import styles from './MenuList.less';
   menu,
   loading: loading.models.menu,
 }))
-@Form.create()
 class MenuList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -111,8 +111,7 @@ class MenuList extends PureComponent {
   };
 
   onResetFormClick = () => {
-    const { form } = this.props;
-    form.resetFields();
+    this.formRef.current.resetFields();
     this.dispatch({
       type: 'menu/fetch',
       search: { parent_id: this.getParentID() },
@@ -120,26 +119,16 @@ class MenuList extends PureComponent {
     });
   };
 
-  onSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const { form } = this.props;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
-      this.dispatch({
-        type: 'menu/fetch',
-        search: {
-          ...values,
-          parent_id: this.getParentID(),
-        },
-        pagination: {},
-      });
-      this.clearSelectRows();
+  onSearchFormSubmit = values => {
+    this.dispatch({
+      type: 'menu/fetch',
+      search: {
+        ...values,
+        parent_id: this.getParentID(),
+      },
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   handleFormSubmit = data => {
@@ -204,15 +193,12 @@ class MenuList extends PureComponent {
     });
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit}>
+      <Form ref={this.formRef} onFinish={this.onSearchFormSubmit}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item>
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item name="queryValue" rules={[{ required: true, message: '请输入查询的值' }]}>
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
