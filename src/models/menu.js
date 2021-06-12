@@ -14,6 +14,7 @@ export default {
     formType: '',
     formTitle: '',
     formID: '',
+    formModalVisible: false,
     formVisible: false,
     formData: {},
     treeData: [],
@@ -213,7 +214,16 @@ export default {
       return { ...state, pagination: payload };
     },
     changeFormVisible(state, { payload }) {
+      if (payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
       return { ...state, formVisible: payload };
+    },
+    changeModalFormVisible(state, { payload }) {
+      if (!payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
+      return { ...state, formModalVisible: payload };
     },
     saveFormType(state, { payload }) {
       return { ...state, formType: payload };

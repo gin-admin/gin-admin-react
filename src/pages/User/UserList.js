@@ -156,7 +156,7 @@ class UserList extends PureComponent {
 
   onDataFormCancel = () => {
     this.dispatch({
-      type: 'user/changeFormVisible',
+      type: 'user/changeModalFormVisible',
       payload: false,
     });
   };

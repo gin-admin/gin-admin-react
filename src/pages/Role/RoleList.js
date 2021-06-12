@@ -149,7 +149,7 @@ class RoleList extends PureComponent {
 
   handleDataFormCancel = () => {
     this.dispatch({
-      type: 'role/changeFormVisible',
+      type: 'role/changeModalFormVisible',
       payload: false,
     });
   };

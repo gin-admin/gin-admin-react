@@ -152,7 +152,7 @@ class MenuList extends PureComponent {
 
   handleFormCancel = () => {
     this.dispatch({
-      type: 'menu/changeFormVisible',
+      type: 'menu/changeModalFormVisible',
       payload: false,
     });
   };

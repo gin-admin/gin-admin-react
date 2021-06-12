@@ -12,6 +12,7 @@ export default {
     submitting: false,
     formTitle: '',
     formID: '',
+    formModalVisible: false,
     formVisible: false,
     formData: {},
   },
@@ -185,7 +186,16 @@ export default {
       return { ...state, search: payload };
     },
     changeFormVisible(state, { payload }) {
+      if (payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
       return { ...state, formVisible: payload };
+    },
+    changeModalFormVisible(state, { payload }) {
+      if (!payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
+      return { ...state, formModalVisible: payload };
     },
     saveFormTitle(state, { payload }) {
       return { ...state, formTitle: payload };
