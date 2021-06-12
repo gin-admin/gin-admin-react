@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PButton from '@/components/PermButton';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import UserCard from './UserCard';
@@ -15,8 +14,9 @@ import styles from './UserList.less';
   loading: state.loading.models.user,
   user: state.user,
 }))
-@Form.create()
 class UserList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -114,8 +114,7 @@ class UserList extends PureComponent {
   };
 
   onResetFormClick = () => {
-    const { form } = this.props;
-    form.resetFields();
+    this.formRef.current.resetFields();
     this.dispatch({
       type: 'user/fetch',
       search: {},
@@ -123,27 +122,21 @@ class UserList extends PureComponent {
     });
   };
 
-  onSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
+  onSearchFormSubmit = values => {
+    const formData = { ...values };
+    if (!formData.roleIDs && !formData.queryValue) {
+      return;
     }
-    const { form } = this.props;
-    form.validateFields({ force: true }, (err, values) => {
-      if (err) {
-        return;
-      }
 
-      const formData = { ...values };
-      if (formData.roleIDs) {
-        formData.roleIDs = formData.roleIDs.map(v => v.role_id).join(',');
-      }
-      this.dispatch({
-        type: 'user/fetch',
-        search: formData,
-        pagination: {},
-      });
-      this.clearSelectRows();
+    if (formData.roleIDs) {
+      formData.roleIDs = formData.roleIDs.map(v => v.role_id).join(',');
+    }
+    this.dispatch({
+      type: 'user/fetch',
+      search: formData,
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   onDataFormSubmit = data => {
@@ -171,19 +164,18 @@ class UserList extends PureComponent {
   }
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit}>
+      <Form ref={this.formRef} onFinish={this.onSearchFormSubmit}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label="模糊查询">
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item label="模糊查询" name="queryValue">
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="所属角色">{getFieldDecorator('roleIDs')(<RoleSelect />)}</Form.Item>
+            <Form.Item label="所属角色" name="roleIDs">
+              <RoleSelect />
+            </Form.Item>
           </Col>
           <Col span={8}>
             <div style={{ overflow: 'hidden', paddingTop: 4 }}>

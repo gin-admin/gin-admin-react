@@ -54,7 +54,7 @@ export default {
     },
     *loadForm({ payload }, { put }) {
       yield put({
-        type: 'changeFormVisible',
+        type: 'changeModalFormVisible',
         payload: true,
       });
 
@@ -92,14 +92,27 @@ export default {
             payload: { id: payload.id },
           }),
         ];
+      } else {
+        yield [
+          put({
+            type: 'changeFormVisible',
+            payload: true,
+          }),
+        ];
       }
     },
     *fetchForm({ payload }, { call, put }) {
       const response = yield call(userService.get, payload.id);
-      yield put({
-        type: 'saveFormData',
-        payload: response,
-      });
+      yield [
+        put({
+          type: 'saveFormData',
+          payload: response,
+        }),
+        put({
+          type: 'changeFormVisible',
+          payload: true,
+        }),
+      ];
     },
     *submit({ payload }, { call, put, select }) {
       yield put({
@@ -131,7 +144,7 @@ export default {
       if (success) {
         message.success('保存成功');
         yield put({
-          type: 'changeFormVisible',
+          type: 'changeModalFormVisible',
           payload: false,
         });
         yield put({

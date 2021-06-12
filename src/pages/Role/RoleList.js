@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import { formatDate } from '@/utils/utils';
@@ -14,8 +13,9 @@ import styles from './RoleList.less';
   role: state.role,
   loading: state.loading.models.role,
 }))
-@Form.create()
 class RoleList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -110,8 +110,7 @@ class RoleList extends PureComponent {
   };
 
   onResetFormClick = () => {
-    const { form } = this.props;
-    form.resetFields();
+    this.formRef.current.resetFields();
 
     this.dispatch({
       type: 'role/fetch',
@@ -120,23 +119,13 @@ class RoleList extends PureComponent {
     });
   };
 
-  handleSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const { form } = this.props;
-    form.validateFields({ force: true }, (err, values) => {
-      if (err) {
-        return;
-      }
-      this.dispatch({
-        type: 'role/fetch',
-        search: values,
-        pagination: {},
-      });
-      this.clearSelectRows();
+  handleSearchFormSubmit = values => {
+    this.dispatch({
+      type: 'role/fetch',
+      search: values,
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   handleDataFormSubmit = data => {
@@ -167,16 +156,12 @@ class RoleList extends PureComponent {
   }
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-
     return (
-      <Form onSubmit={this.handleSearchFormSubmit}>
+      <Form ref={this.formRef} onFinish={this.handleSearchFormSubmit}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item>
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item name="queryValue" rules={[{ required: true, message: '请输入查询的值' }]}>
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
