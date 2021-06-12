@@ -150,7 +150,7 @@ class DemoList extends PureComponent {
 
   onDataFormCancel = () => {
     this.dispatch({
-      type: 'demo/changeFormVisible',
+      type: 'demo/changeModalFormVisible',
       payload: false,
     });
   };
