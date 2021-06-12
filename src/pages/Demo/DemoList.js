@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
 import PButton from '@/components/PermButton';
 import { formatDate } from '@/utils/utils';
@@ -14,8 +13,9 @@ import styles from './DemoList.less';
   loading: state.loading.models.demo,
   demo: state.demo,
 }))
-@Form.create()
 class DemoList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -122,22 +122,16 @@ class DemoList extends PureComponent {
     });
   };
 
-  onSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
+  onSearchFormSubmit = values => {
+    if (!values.queryValue) {
+      return;
     }
-    const { form } = this.props;
-    form.validateFields({ force: true }, (err, values) => {
-      if (err) {
-        return;
-      }
-      this.dispatch({
-        type: 'demo/fetch',
-        search: values,
-        pagination: {},
-      });
-      this.clearSelectRows();
+    this.dispatch({
+      type: 'demo/fetch',
+      search: values,
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   onDataFormSubmit = data => {
@@ -165,15 +159,12 @@ class DemoList extends PureComponent {
   }
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit}>
+      <Form onFinish={this.onSearchFormSubmit} ref={this.formRef}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item>
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item name="queryValue">
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
