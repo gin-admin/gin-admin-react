@@ -16,7 +16,7 @@ class MenuCard extends PureComponent {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const formData = { ...values };
-        formData.show_status = parseInt(formData.show_status, 10);
+        formData.is_show = parseInt(formData.is_show, 10);
         formData.status = parseInt(formData.status, 10);
         formData.sequence = parseInt(formData.sequence, 10);
         onSubmit(formData);
@@ -134,8 +134,8 @@ class MenuCard extends PureComponent {
             <Row>
               <Col span={12}>
                 <Form.Item {...formItemLayout} label="是否显示">
-                  {getFieldDecorator('show_status', {
-                    initialValue: formData.show_status ? formData.show_status.toString() : '1',
+                  {getFieldDecorator('is_show', {
+                    initialValue: formData.is_show ? formData.is_show.toString() : '1',
                   })(
                     <Radio.Group>
                       <Radio value="1">显示</Radio>

@@ -248,7 +248,7 @@ class MenuList extends PureComponent {
         dataIndex: 'name',
         width: 130,
         render: (val, row) => {
-          if (row.show_status !== 1) {
+          if (row.is_show !== 1) {
             return <Badge status="default" text={val} />;
           }
           return <span>{val}</span>;

@@ -168,11 +168,11 @@ class AdminLayout extends React.PureComponent {
     }
 
     return menusData.map(item => {
-      if (!item.name || item.show_status !== 1) {
+      if (!item.name || item.is_show !== 1) {
         return null;
       }
 
-      if (item.children && item.children.some(child => child.name && child.show_status === 1)) {
+      if (item.children && item.children.some(child => child.name && child.is_show === 1)) {
         return (
           <SubMenu
             title={
