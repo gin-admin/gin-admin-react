@@ -19,6 +19,9 @@ class MenuCard extends PureComponent {
         formData.is_show = parseInt(formData.is_show, 10);
         formData.status = parseInt(formData.status, 10);
         formData.sequence = parseInt(formData.sequence, 10);
+        if (formData.parent_id === '') {
+          formData.parent_id = '0';
+        }
         onSubmit(formData);
       }
     });
