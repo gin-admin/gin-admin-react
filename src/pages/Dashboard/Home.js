@@ -69,7 +69,7 @@ class Home extends PureComponent {
       >
         <Card>
           <Alert
-            message="gin-admin 6.0.0 现已发布，欢迎使用下载启动体验。"
+            message="gin-admin 8.1.0 现已发布，欢迎使用下载启动体验。"
             type="success"
             showIcon
             banner
