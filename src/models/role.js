@@ -13,6 +13,7 @@ export default {
     submitting: false,
     formTitle: '',
     formID: '',
+    formModalVisible: false,
     formVisible: false,
     formData: {},
     selectData: [],
@@ -55,7 +56,7 @@ export default {
     },
     *loadForm({ payload }, { put }) {
       yield put({
-        type: 'changeFormVisible',
+        type: 'changeModalFormVisible',
         payload: true,
       });
 
@@ -93,6 +94,13 @@ export default {
             payload: { id: payload.id },
           }),
         ];
+      } else {
+        yield [
+          put({
+            type: 'changeFormVisible',
+            payload: true,
+          }),
+        ];
       }
     },
     *fetchForm({ payload }, { call, put }) {
@@ -119,6 +127,10 @@ export default {
         put({
           type: 'saveFormData',
           payload: response,
+        }),
+        put({
+          type: 'changeFormVisible',
+          payload: true,
         }),
       ];
     },
@@ -153,7 +165,7 @@ export default {
       if (success) {
         message.success('保存成功');
         yield put({
-          type: 'changeFormVisible',
+          type: 'changeModalFormVisible',
           payload: false,
         });
         yield put({
@@ -218,7 +230,16 @@ export default {
       return { ...state, pagination: payload };
     },
     changeFormVisible(state, { payload }) {
+      if (payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
       return { ...state, formVisible: payload };
+    },
+    changeModalFormVisible(state, { payload }) {
+      if (!payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
+      return { ...state, formModalVisible: payload };
     },
     saveFormTitle(state, { payload }) {
       return { ...state, formTitle: payload };

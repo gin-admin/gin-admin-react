@@ -1,10 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
+import { showPButtons } from '@/utils/uiutil';
 import { formatDate } from '@/utils/utils';
 import RoleCard from './RoleCard';
 
@@ -14,8 +13,9 @@ import styles from './RoleList.less';
   role: state.role,
   loading: state.loading.models.role,
 }))
-@Form.create()
 class RoleList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -56,7 +56,7 @@ class RoleList extends PureComponent {
     dispatch(action);
   };
 
-  handleAddClick = () => {
+  onAddClick = () => {
     this.dispatch({
       type: 'role/loadForm',
       payload: {
@@ -65,7 +65,7 @@ class RoleList extends PureComponent {
     });
   };
 
-  handleEditClick = item => {
+  onItemEditClick = item => {
     this.dispatch({
       type: 'role/loadForm',
       payload: {
@@ -75,7 +75,7 @@ class RoleList extends PureComponent {
     });
   };
 
-  handleDelClick = item => {
+  onItemDelClick = item => {
     Modal.confirm({
       title: `确定删除【角色数据：${item.name}】？`,
       okText: '确认',
@@ -110,8 +110,7 @@ class RoleList extends PureComponent {
   };
 
   onResetFormClick = () => {
-    const { form } = this.props;
-    form.resetFields();
+    this.formRef.current.resetFields();
 
     this.dispatch({
       type: 'role/fetch',
@@ -120,23 +119,13 @@ class RoleList extends PureComponent {
     });
   };
 
-  handleSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const { form } = this.props;
-    form.validateFields({ force: true }, (err, values) => {
-      if (err) {
-        return;
-      }
-      this.dispatch({
-        type: 'role/fetch',
-        search: values,
-        pagination: {},
-      });
-      this.clearSelectRows();
+  handleSearchFormSubmit = values => {
+    this.dispatch({
+      type: 'role/fetch',
+      search: values,
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   handleDataFormSubmit = data => {
@@ -149,7 +138,7 @@ class RoleList extends PureComponent {
 
   handleDataFormCancel = () => {
     this.dispatch({
-      type: 'role/changeFormVisible',
+      type: 'role/changeModalFormVisible',
       payload: false,
     });
   };
@@ -167,16 +156,12 @@ class RoleList extends PureComponent {
   }
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-
     return (
-      <Form onSubmit={this.handleSearchFormSubmit}>
+      <Form ref={this.formRef} onFinish={this.handleSearchFormSubmit}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item>
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item name="queryValue" rules={[{ required: true, message: '请输入查询的值' }]}>
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -249,45 +234,14 @@ class RoleList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              <PButton code="add" type="primary" onClick={() => this.handleAddClick()}>
-                新建
-              </PButton>
-              {selectedRows.length === 1 && [
-                <PButton
-                  key="edit"
-                  code="edit"
-                  onClick={() => this.handleEditClick(selectedRows[0])}
-                >
-                  编辑
-                </PButton>,
-                <PButton
-                  key="del"
-                  code="del"
-                  type="danger"
-                  onClick={() => this.handleDelClick(selectedRows[0])}
-                >
-                  删除
-                </PButton>,
-                selectedRows[0].status === 2 && (
-                  <PButton
-                    key="enable"
-                    code="enable"
-                    onClick={() => this.onItemEnableClick(selectedRows[0])}
-                  >
-                    启用
-                  </PButton>
-                ),
-                selectedRows[0].status === 1 && (
-                  <PButton
-                    key="disable"
-                    code="disable"
-                    type="danger"
-                    onClick={() => this.onItemDisableClick(selectedRows[0])}
-                  >
-                    禁用
-                  </PButton>
-                ),
-              ]}
+              {showPButtons(
+                selectedRows,
+                this.onAddClick,
+                this.onItemEditClick,
+                this.onItemDelClick,
+                this.onItemEnableClick,
+                this.onItemDisableClick
+              )}
             </div>
             <div>
               <Table

@@ -1,11 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Layout, Tree, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Layout, Tree, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
 import { formatDate } from '@/utils/utils';
+import { showPButtons } from '@/utils/uiutil';
 import MenuCard from './MenuCard';
 import styles from './MenuList.less';
 
@@ -13,8 +12,9 @@ import styles from './MenuList.less';
   menu,
   loading: loading.models.menu,
 }))
-@Form.create()
 class MenuList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -47,7 +47,7 @@ class MenuList extends PureComponent {
     });
   };
 
-  handleEditClick = () => {
+  onItemEditClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -62,7 +62,7 @@ class MenuList extends PureComponent {
     });
   };
 
-  handleAddClick = () => {
+  onAddClick = () => {
     this.dispatch({
       type: 'menu/loadForm',
       payload: {
@@ -71,7 +71,7 @@ class MenuList extends PureComponent {
     });
   };
 
-  handleDelClick = () => {
+  onItemDelClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -111,8 +111,7 @@ class MenuList extends PureComponent {
   };
 
   onResetFormClick = () => {
-    const { form } = this.props;
-    form.resetFields();
+    this.formRef.current.resetFields();
     this.dispatch({
       type: 'menu/fetch',
       search: { parent_id: this.getParentID() },
@@ -120,26 +119,16 @@ class MenuList extends PureComponent {
     });
   };
 
-  onSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const { form } = this.props;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
-      this.dispatch({
-        type: 'menu/fetch',
-        search: {
-          ...values,
-          parent_id: this.getParentID(),
-        },
-        pagination: {},
-      });
-      this.clearSelectRows();
+  onSearchFormSubmit = values => {
+    this.dispatch({
+      type: 'menu/fetch',
+      search: {
+        ...values,
+        parent_id: this.getParentID(),
+      },
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   handleFormSubmit = data => {
@@ -152,7 +141,7 @@ class MenuList extends PureComponent {
 
   handleFormCancel = () => {
     this.dispatch({
-      type: 'menu/changeFormVisible',
+      type: 'menu/changeModalFormVisible',
       payload: false,
     });
   };
@@ -204,15 +193,12 @@ class MenuList extends PureComponent {
     });
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit}>
+      <Form ref={this.formRef} onFinish={this.onSearchFormSubmit}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item>
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item name="queryValue" rules={[{ required: true, message: '请输入查询的值' }]}>
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -353,41 +339,14 @@ class MenuList extends PureComponent {
               <div className={styles.tableList}>
                 <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
                 <div className={styles.tableListOperator}>
-                  <PButton code="add" type="primary" onClick={() => this.handleAddClick()}>
-                    新建
-                  </PButton>
-                  {selectedRowKeys.length === 1 && [
-                    <PButton key="edit" code="edit" onClick={() => this.handleEditClick()}>
-                      编辑
-                    </PButton>,
-                    <PButton
-                      key="del"
-                      code="del"
-                      type="danger"
-                      onClick={() => this.handleDelClick()}
-                    >
-                      删除
-                    </PButton>,
-                    selectedRows[0].status === 2 && (
-                      <PButton
-                        key="enable"
-                        code="enable"
-                        onClick={() => this.onItemEnableClick(selectedRows[0])}
-                      >
-                        启用
-                      </PButton>
-                    ),
-                    selectedRows[0].status === 1 && (
-                      <PButton
-                        key="disable"
-                        code="disable"
-                        type="danger"
-                        onClick={() => this.onItemDisableClick(selectedRows[0])}
-                      >
-                        禁用
-                      </PButton>
-                    ),
-                  ]}
+                  {showPButtons(
+                    selectedRows,
+                    this.onAddClick,
+                    this.onItemEditClick,
+                    this.onItemDelClick,
+                    this.onItemEnableClick,
+                    this.onItemDisableClick
+                  )}
                 </div>
                 <Table
                   rowSelection={{
