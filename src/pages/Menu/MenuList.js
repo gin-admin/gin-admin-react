@@ -3,8 +3,8 @@ import { connect } from 'dva';
 import '@ant-design/compatible/assets/index.css';
 import { Form, Row, Col, Card, Input, Button, Table, Modal, Layout, Tree, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
 import { formatDate } from '@/utils/utils';
+import { showPButtons } from '@/utils/uiutil';
 import MenuCard from './MenuCard';
 import styles from './MenuList.less';
 
@@ -47,7 +47,7 @@ class MenuList extends PureComponent {
     });
   };
 
-  handleEditClick = () => {
+  onItemEditClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -62,7 +62,7 @@ class MenuList extends PureComponent {
     });
   };
 
-  handleAddClick = () => {
+  onAddClick = () => {
     this.dispatch({
       type: 'menu/loadForm',
       payload: {
@@ -71,7 +71,7 @@ class MenuList extends PureComponent {
     });
   };
 
-  handleDelClick = () => {
+  onItemDelClick = () => {
     const { selectedRows } = this.state;
     if (selectedRows.length === 0) {
       return;
@@ -339,41 +339,14 @@ class MenuList extends PureComponent {
               <div className={styles.tableList}>
                 <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
                 <div className={styles.tableListOperator}>
-                  <PButton code="add" type="primary" onClick={() => this.handleAddClick()}>
-                    新建
-                  </PButton>
-                  {selectedRowKeys.length === 1 && [
-                    <PButton key="edit" code="edit" onClick={() => this.handleEditClick()}>
-                      编辑
-                    </PButton>,
-                    <PButton
-                      key="del"
-                      code="del"
-                      type="danger"
-                      onClick={() => this.handleDelClick()}
-                    >
-                      删除
-                    </PButton>,
-                    selectedRows[0].status === 2 && (
-                      <PButton
-                        key="enable"
-                        code="enable"
-                        onClick={() => this.onItemEnableClick(selectedRows[0])}
-                      >
-                        启用
-                      </PButton>
-                    ),
-                    selectedRows[0].status === 1 && (
-                      <PButton
-                        key="disable"
-                        code="disable"
-                        type="danger"
-                        onClick={() => this.onItemDisableClick(selectedRows[0])}
-                      >
-                        禁用
-                      </PButton>
-                    ),
-                  ]}
+                  {showPButtons(
+                    selectedRows,
+                    this.onAddClick,
+                    this.onItemEditClick,
+                    this.onItemDelClick,
+                    this.onItemEnableClick,
+                    this.onItemDisableClick
+                  )}
                 </div>
                 <Table
                   rowSelection={{
