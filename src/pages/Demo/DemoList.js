@@ -1,10 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
+import { Form, Row, Col, Card, Input, Button, Table, Modal, Badge } from 'antd';
 import PageHeaderLayout from '@/layouts/PageHeaderLayout';
-import PButton from '@/components/PermButton';
+import { showPButtons } from '@/utils/uiutil';
 import { formatDate } from '@/utils/utils';
 import DemoCard from './DemoCard';
 
@@ -14,8 +13,9 @@ import styles from './DemoList.less';
   loading: state.loading.models.demo,
   demo: state.demo,
 }))
-@Form.create()
 class DemoList extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     selectedRowKeys: [],
     selectedRows: [],
@@ -122,22 +122,16 @@ class DemoList extends PureComponent {
     });
   };
 
-  onSearchFormSubmit = e => {
-    if (e) {
-      e.preventDefault();
+  onSearchFormSubmit = values => {
+    if (!values.queryValue) {
+      return;
     }
-    const { form } = this.props;
-    form.validateFields({ force: true }, (err, values) => {
-      if (err) {
-        return;
-      }
-      this.dispatch({
-        type: 'demo/fetch',
-        search: values,
-        pagination: {},
-      });
-      this.clearSelectRows();
+    this.dispatch({
+      type: 'demo/fetch',
+      search: values,
+      pagination: {},
     });
+    this.clearSelectRows();
   };
 
   onDataFormSubmit = data => {
@@ -150,7 +144,7 @@ class DemoList extends PureComponent {
 
   onDataFormCancel = () => {
     this.dispatch({
-      type: 'demo/changeFormVisible',
+      type: 'demo/changeModalFormVisible',
       payload: false,
     });
   };
@@ -165,15 +159,12 @@ class DemoList extends PureComponent {
   }
 
   renderSearchForm() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
     return (
-      <Form onSubmit={this.onSearchFormSubmit}>
+      <Form onFinish={this.onSearchFormSubmit} ref={this.formRef}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item>
-              {getFieldDecorator('queryValue')(<Input placeholder="请输入需要查询的内容" />)}
+            <Form.Item name="queryValue">
+              <Input placeholder="请输入需要查询的内容" />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -246,45 +237,14 @@ class DemoList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSearchForm()}</div>
             <div className={styles.tableListOperator}>
-              <PButton code="add" type="primary" onClick={() => this.onAddClick()}>
-                新建
-              </PButton>
-              {selectedRows.length === 1 && [
-                <PButton
-                  key="edit"
-                  code="edit"
-                  onClick={() => this.onItemEditClick(selectedRows[0])}
-                >
-                  编辑
-                </PButton>,
-                <PButton
-                  key="del"
-                  code="del"
-                  type="danger"
-                  onClick={() => this.onItemDelClick(selectedRows[0])}
-                >
-                  删除
-                </PButton>,
-                selectedRows[0].status === 2 && (
-                  <PButton
-                    key="enable"
-                    code="enable"
-                    onClick={() => this.onItemEnableClick(selectedRows[0])}
-                  >
-                    启用
-                  </PButton>
-                ),
-                selectedRows[0].status === 1 && (
-                  <PButton
-                    key="disable"
-                    code="disable"
-                    type="danger"
-                    onClick={() => this.onItemDisableClick(selectedRows[0])}
-                  >
-                    禁用
-                  </PButton>
-                ),
-              ]}
+              {showPButtons(
+                selectedRows,
+                this.onAddClick,
+                this.onItemEditClick,
+                this.onItemDelClick,
+                this.onItemEnableClick,
+                this.onItemDisableClick
+              )}
             </div>
             <div>
               <Table

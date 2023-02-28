@@ -1,41 +1,42 @@
 import React, { PureComponent } from 'react';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Input, Modal, message } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import { updatePwd } from '@/services/login';
 import { md5Hash } from '../../utils/utils';
 
-@Form.create()
 class UpdatePasswordDialog extends PureComponent {
+  formRef = React.createRef();
+
   state = {
     submitting: false,
   };
 
   onOKClick = () => {
-    const { form } = this.props;
-
-    form.validateFieldsAndScroll((err, values) => {
-      if (err) {
-        return;
-      }
-      if (values.new_password !== values.confirm_new_password) {
-        message.warning('新密码与确认新密码不一致！');
-        return;
-      }
-
-      this.setState({ submitting: true });
-      const formData = {
-        old_password: md5Hash(values.old_password),
-        new_password: md5Hash(values.new_password),
-      };
-      updatePwd(formData).then(res => {
-        if (res.status === 'OK') {
-          message.success('密码更新成功！');
-          this.handleCancel();
+    this.formRef.current
+      .validateFields()
+      .then(values => {
+        if (values.new_password !== values.confirm_new_password) {
+          message.warning('新密码与确认新密码不一致！');
+          return;
         }
+
+        this.setState({ submitting: true });
+        const formData = {
+          old_password: md5Hash(values.old_password),
+          new_password: md5Hash(values.new_password),
+        };
+        updatePwd(formData).then(res => {
+          if (res.status === 'OK') {
+            message.success('密码更新成功！');
+            this.handleCancel();
+          }
+          this.setState({ submitting: false });
+        });
+      })
+      .catch(err => {
+        console.log(' ----- === err :', err);
         this.setState({ submitting: false });
       });
-    });
   };
 
   handleCancel = () => {
@@ -51,10 +52,7 @@ class UpdatePasswordDialog extends PureComponent {
   };
 
   render() {
-    const {
-      visible,
-      form: { getFieldDecorator },
-    } = this.props;
+    const { visible } = this.props;
 
     const { submitting } = this.state;
 
@@ -80,36 +78,30 @@ class UpdatePasswordDialog extends PureComponent {
         style={{ top: 20 }}
         bodyStyle={{ maxHeight: 'calc( 100vh - 158px )', overflowY: 'auto' }}
       >
-        <Form>
-          <Form.Item {...formItemLayout} label="旧密码">
-            {getFieldDecorator('old_password', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入旧密码',
-                },
-              ],
-            })(<Input type="password" placeholder="请输入旧密码" />)}
+        <Form ref={this.formRef} initialValues={{}}>
+          <Form.Item
+            {...formItemLayout}
+            label="旧密码"
+            name="old_password"
+            rules={[{ required: true, message: '请输入旧密码' }]}
+          >
+            <Input type="password" placeholder="请输入旧密码" />
           </Form.Item>
-          <Form.Item {...formItemLayout} label="新密码">
-            {getFieldDecorator('new_password', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入新密码',
-                },
-              ],
-            })(<Input type="password" placeholder="请输入新密码" />)}
+          <Form.Item
+            {...formItemLayout}
+            label="新密码"
+            name="new_password"
+            rules={[{ required: true, message: '请输入新密码' }]}
+          >
+            <Input type="password" placeholder="请输入新密码" />
           </Form.Item>
-          <Form.Item {...formItemLayout} label="确认新密码">
-            {getFieldDecorator('confirm_new_password', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入确认新密码',
-                },
-              ],
-            })(<Input type="password" placeholder="请输入确认新密码" />)}
+          <Form.Item
+            {...formItemLayout}
+            label="确认新密码"
+            name="confirm_new_password"
+            rules={[{ required: true, message: '请输入确认新密码' }]}
+          >
+            <Input type="password" placeholder="请输入确认新密码" />
           </Form.Item>
         </Form>
       </Modal>

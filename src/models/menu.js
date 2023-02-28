@@ -14,6 +14,7 @@ export default {
     formType: '',
     formTitle: '',
     formID: '',
+    formModalVisible: false,
     formVisible: false,
     formData: {},
     treeData: [],
@@ -59,7 +60,7 @@ export default {
     },
     *loadForm({ payload }, { put, select }) {
       yield put({
-        type: 'changeFormVisible',
+        type: 'changeModalFormVisible',
         payload: true,
       });
 
@@ -104,14 +105,26 @@ export default {
           type: 'saveFormData',
           payload: { parent_id: search.parentID ? search.parentID : '' },
         });
+        yield [
+          put({
+            type: 'changeFormVisible',
+            payload: true,
+          }),
+        ];
       }
     },
     *fetchForm({ payload }, { call, put }) {
       const response = yield call(menuService.get, payload.id);
-      yield put({
-        type: 'saveFormData',
-        payload: response,
-      });
+      yield [
+        put({
+          type: 'saveFormData',
+          payload: response,
+        }),
+        put({
+          type: 'changeFormVisible',
+          payload: true,
+        }),
+      ];
     },
     *submit({ payload }, { call, put, select }) {
       yield put({
@@ -143,7 +156,7 @@ export default {
       if (success) {
         message.success('保存成功');
         yield put({
-          type: 'changeFormVisible',
+          type: 'changeModalFormVisible',
           payload: false,
         });
 
@@ -213,7 +226,16 @@ export default {
       return { ...state, pagination: payload };
     },
     changeFormVisible(state, { payload }) {
+      if (payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
       return { ...state, formVisible: payload };
+    },
+    changeModalFormVisible(state, { payload }) {
+      if (!payload) {
+        return { ...state, formModalVisible: payload, formVisible: payload };
+      }
+      return { ...state, formModalVisible: payload };
     },
     saveFormType(state, { payload }) {
       return { ...state, formType: payload };
